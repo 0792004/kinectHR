@@ -37,34 +37,29 @@ END_MESSAGE_MAP()
 
 void CkinectReco::OnTimer(UINT_PTR nIDEvent)
 {
-	if (!FAILED(kinectStream.openColorStream()))
+	if (!FAILED(kinectStream.createRGBImage(kinectStream.m_colorStreamHandle, kinectStream.m_colorIpl)))
 	{
-		if (!FAILED(kinectStream.createRGBImage(kinectStream.m_colorStreamHandle, kinectStream.m_colorIpl)))
-		{
-			CDC *pDC;
-			pDC = m_sColor.GetDC();
+		CDC *pDC;
+		pDC = m_sColor.GetDC();
 
-			CRect rect;
-			rect.SetRect(0, 0, (int) (KINECT_WIDTH * VIEW_RATE / 100), (int) (KINECT_HEIGHT * VIEW_RATE / 100));
+		CRect rect;
+		rect.SetRect(0, 0, (int) (KINECT_WIDTH * VIEW_RATE / 100), (int) (KINECT_HEIGHT * VIEW_RATE / 100));
 
-			cvvImage.CopyOf(kinectStream.m_colorIpl, 3);
-			cvvImage.DrawToHDC(pDC->m_hDC, rect);
-		}
+		cvvImage.CopyOf(kinectStream.m_colorIpl, 3);
+		cvvImage.DrawToHDC(pDC->m_hDC, rect);
 	}
-	if (!FAILED(kinectStream.openDepthStream()))
+
+	if (!FAILED(kinectStream.createDepthImage(kinectStream.m_depthStreamHandle, kinectStream.m_depthIpl)))
 	{
-		if (!FAILED(kinectStream.createDepthImage(kinectStream.m_depthStreamHandle, kinectStream.m_depthIpl)))
-		{
-			kinectStream.ApplySkeleton(kinectStream.m_depthIpl);
-			CDC *pDC;
-			pDC = m_sDepth.GetDC();
+		kinectStream.ApplySkeleton(kinectStream.m_depthIpl);
+		CDC *pDC;
+		pDC = m_sDepth.GetDC();
 
-			CRect rect;
-			rect.SetRect(0, 0, (int) (KINECT_WIDTH * VIEW_RATE / 100), (int) (KINECT_HEIGHT * VIEW_RATE / 100));
+		CRect rect;
+		rect.SetRect(0, 0, (int) (KINECT_WIDTH * VIEW_RATE / 100), (int) (KINECT_HEIGHT * VIEW_RATE / 100));
 
-			cvvImage.CopyOf(kinectStream.m_depthIpl, 3);
-			cvvImage.DrawToHDC(pDC->m_hDC, rect);
-		}
+		cvvImage.CopyOf(kinectStream.m_depthIpl, 3);
+		cvvImage.DrawToHDC(pDC->m_hDC, rect);
 	}
 
 	CDialogEx::OnTimer(nIDEvent);
@@ -73,6 +68,8 @@ void CkinectReco::OnTimer(UINT_PTR nIDEvent)
 
 void CkinectReco::OnBnClickedButtonRun()
 {
+	kinectStream.openColorStream();
+	kinectStream.openDepthStream();
 	kinectStream.InitializeKinect();
 	SetTimer(1, 1000 / FPS, NULL);
 }
