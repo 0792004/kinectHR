@@ -7,6 +7,7 @@
 #include "kinectUIDlg.h"
 #include "afxdialogex.h"
 #include "CkinectReco.h"
+#include "CkinectLearn.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -64,10 +65,10 @@ void CkinectUIDlg::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CkinectUIDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
-//	ON_WM_PAINT()
+	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_BUTTON_RECO, &CkinectUIDlg::OnBnClickedButtonReco)
-	ON_WM_PAINT()
+	ON_BN_CLICKED(IDC_BUTTON_LEARN, &CkinectUIDlg::OnBnClickedButtonLearn)
 END_MESSAGE_MAP()
 
 
@@ -161,5 +162,12 @@ HCURSOR CkinectUIDlg::OnQueryDragIcon()
 void CkinectUIDlg::OnBnClickedButtonReco()
 {
 	CkinectReco recoDlg;
+	recoDlg.DoModal();
+}
+
+
+void CkinectUIDlg::OnBnClickedButtonLearn()
+{
+	CkinectLearn recoDlg;
 	recoDlg.DoModal();
 }

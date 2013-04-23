@@ -37,7 +37,9 @@ END_MESSAGE_MAP()
 
 void CkinectReco::OnTimer(UINT_PTR nIDEvent)
 {
-	if (!FAILED(kinectStream.createRGBImage(kinectStream.m_colorStreamHandle, kinectStream.m_colorIpl)))
+	//kinectStream;
+
+	if (!FAILED(kinectStream.CreateRGBImage(kinectStream.m_colorStreamHandle, kinectStream.m_colorIpl)))
 	{
 		CDC *pDC;
 		pDC = m_sColor.GetDC();
@@ -49,7 +51,7 @@ void CkinectReco::OnTimer(UINT_PTR nIDEvent)
 		cvvImage.DrawToHDC(pDC->m_hDC, rect);
 	}
 
-	if (!FAILED(kinectStream.createDepthImage(kinectStream.m_depthStreamHandle, kinectStream.m_depthIpl)))
+	if (!FAILED(kinectStream.CreateDepthImage(kinectStream.m_depthStreamHandle, kinectStream.m_depthIpl)))
 	{
 		kinectStream.ApplySkeleton(kinectStream.m_depthIpl);
 		CDC *pDC;
@@ -68,8 +70,8 @@ void CkinectReco::OnTimer(UINT_PTR nIDEvent)
 
 void CkinectReco::OnBnClickedButtonRun()
 {
-	kinectStream.openColorStream();
-	kinectStream.openDepthStream();
 	kinectStream.InitializeKinect();
+	kinectStream.OpenColorStream();
+	kinectStream.OpenDepthStream();
 	SetTimer(1, 1000 / FPS, NULL);
 }

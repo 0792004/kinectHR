@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "kinectStream.h"
 #include "CvvImage.h"
 #include "afxwin.h"
@@ -33,6 +32,5 @@ public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	CStatic m_sColor;
 	CStatic m_sDepth;
-//	afx_msg void OnPaint();
 	afx_msg void OnBnClickedButtonRun();
 };

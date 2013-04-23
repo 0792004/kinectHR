@@ -33,20 +33,27 @@ public:
 	HRESULT m_depthHr;
 
 	// Skeleton
+	NUI_SKELETON_DATA m_skeletonData;
 	CvPoint m_skeletonPoints[NUI_SKELETON_POSITION_COUNT];
+
+	// Vetor
+	vector<Point2d> rawData[NUI_SKELETON_POSITION_COUNT];
 
 	// 함수
 	// 초기화
 	void InitializeKinect();
 
+	//
+	void CloseKinect();
+
 	// Color
-	HRESULT openColorStream();
-	HRESULT createRGBImage(HANDLE h, IplImage* Color);
+	HRESULT OpenColorStream();
+	HRESULT CreateRGBImage(HANDLE h, IplImage* Color);
 
 	// Depth
 	RGBQUAD Nui_ShortToQuad_Depth(USHORT s);
-	HRESULT openDepthStream();
-	HRESULT createDepthImage(HANDLE h, IplImage* Depth);
+	HRESULT OpenDepthStream();
+	HRESULT CreateDepthImage(HANDLE h, IplImage* Depth);
 
 	// Skeleton
 	CvPoint SkeletonToScreen(Vector4 skeletonPoint);
@@ -55,4 +62,6 @@ public:
 	void DrawSkeleton(const NUI_SKELETON_DATA &position, IplImage *Skeleton);
 	void ApplySkeleton(IplImage *img);
 
+	// get
+	vector<Point2d> GetSkeletonPositon(NUI_SKELETON_POSITION_INDEX idx);
 };

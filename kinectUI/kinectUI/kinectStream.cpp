@@ -23,7 +23,18 @@ void CKinectStream::InitializeKinect()
 	while(FailToConnect);
 }
 
-HRESULT CKinectStream::openColorStream()
+void CKinectStream::CloseKinect()
+{
+	cvReleaseImageHeader(&m_colorIpl);
+	cvReleaseImageHeader(&m_depthIpl);
+	this->m_colorStreamHandle = NULL;
+	this->m_depthStreamHandle = NULL;
+	this->m_nextColorFrameEvent = NULL;
+	this->m_nextDepthFrameEvent = NULL;
+	//NuiShutdown();
+}
+
+HRESULT CKinectStream::OpenColorStream()
 {
 	m_nextColorFrameEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
 	m_colorIpl = cvCreateImage(cvSize(KINECT_WIDTH, KINECT_HEIGHT), IPL_DEPTH_8U, 3);
@@ -41,7 +52,7 @@ HRESULT CKinectStream::openColorStream()
 
 }
 
-HRESULT CKinectStream::createRGBImage(HANDLE h, IplImage* Color)
+HRESULT CKinectStream::CreateRGBImage(HANDLE h, IplImage* Color)
 {
 	const NUI_IMAGE_FRAME *pImageFrame = NULL;
 
@@ -90,7 +101,7 @@ RGBQUAD CKinectStream::Nui_ShortToQuad_Depth(USHORT s)
 	return q;
 }
 
-HRESULT CKinectStream::openDepthStream()
+HRESULT CKinectStream::OpenDepthStream()
 {
 	m_nextDepthFrameEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
 	m_depthIpl = cvCreateImage(cvSize(KINECT_WIDTH, KINECT_HEIGHT), IPL_DEPTH_8U, 3);
@@ -108,7 +119,7 @@ HRESULT CKinectStream::openDepthStream()
 
 }
 
-HRESULT CKinectStream::createDepthImage(HANDLE h, IplImage* Depth)
+HRESULT CKinectStream::CreateDepthImage(HANDLE h, IplImage* Depth)
 {
 	const NUI_IMAGE_FRAME *pImageFrame = NULL;
 
@@ -207,6 +218,29 @@ void CKinectStream::DrawSkeleton(const NUI_SKELETON_DATA &position, IplImage *Sk
 		m_skeletonPoints[i] = SkeletonToScreen(position.SkeletonPositions[i]);
 	}
 
+	// ¿ÞÂÊ ÆÈ²ÞÄ¡, ¼Õ, ¿À¸¥ÂÊ ÆÈ²ÞÄ¡, ¼ÕÀÇ ÁÂÇ¥°ª ÀúÀå
+	Point2d p2dLE = Point2d(
+		position.SkeletonPositions[NUI_SKELETON_POSITION_ELBOW_LEFT].x,
+		position.SkeletonPositions[NUI_SKELETON_POSITION_ELBOW_LEFT].y);
+
+	Point2d p2dLH = Point2d(
+		position.SkeletonPositions[NUI_SKELETON_POSITION_HAND_LEFT].x,
+		position.SkeletonPositions[NUI_SKELETON_POSITION_HAND_LEFT].y);
+
+	Point2d p2dRE = Point2d(
+		position.SkeletonPositions[NUI_SKELETON_POSITION_ELBOW_RIGHT].x,
+		position.SkeletonPositions[NUI_SKELETON_POSITION_ELBOW_RIGHT].y);
+
+	Point2d p2dRH = Point2d(
+		position.SkeletonPositions[NUI_SKELETON_POSITION_HAND_RIGHT].x,
+		position.SkeletonPositions[NUI_SKELETON_POSITION_HAND_RIGHT].y);
+
+	rawData[NUI_SKELETON_POSITION_ELBOW_LEFT].push_back(p2dLE);
+	rawData[NUI_SKELETON_POSITION_HAND_LEFT].push_back(p2dLH);
+	rawData[NUI_SKELETON_POSITION_ELBOW_RIGHT].push_back(p2dRE);
+	rawData[NUI_SKELETON_POSITION_HAND_RIGHT].push_back(p2dRH);
+
+	// skleton ±×¸®±â
 	DrawBone(position, NUI_SKELETON_POSITION_SHOULDER_RIGHT, NUI_SKELETON_POSITION_ELBOW_RIGHT, Skeleton);
 	DrawBone(position, NUI_SKELETON_POSITION_ELBOW_RIGHT, NUI_SKELETON_POSITION_WRIST_RIGHT, Skeleton);
 	DrawBone(position, NUI_SKELETON_POSITION_WRIST_RIGHT, NUI_SKELETON_POSITION_HAND_RIGHT, Skeleton);
@@ -225,7 +259,7 @@ void CKinectStream::ApplySkeleton(IplImage *img)
 	/*
 	if(FAILED(hr))
 	{
-		return -1;
+	return -1;
 	}
 	*/
 	NuiTransformSmooth(&skeletonFrame, NULL);
@@ -236,7 +270,13 @@ void CKinectStream::ApplySkeleton(IplImage *img)
 
 		if(NUI_SKELETON_TRACKED == state)
 		{
+			if (i == 0) m_skeletonData = skeletonFrame.SkeletonData[i];
 			DrawSkeleton(skeletonFrame.SkeletonData[i], img);
 		}
 	}
+}
+
+vector<Point2d> CKinectStream::GetSkeletonPositon(NUI_SKELETON_POSITION_INDEX idx)
+{
+	return rawData[NUI_SKELETON_POSITION_ELBOW_LEFT];
 }
