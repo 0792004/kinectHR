@@ -1,37 +1,19 @@
-﻿Build started 2013-04-23 오후 3:16:45.
+﻿Build started 2013-05-01 오후 5:09:15.
      1>Project "C:\Users\kwon\Documents\GitHub\kinectHR\kinectUI\kinectUI\kinectUI.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
          Creating "Debug\kinectUI.unsuccessfulbuild" because "AlwaysCreate" was specified.
        ClCompile:
          All outputs are up-to-date.
-         C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D _UNICODE /D UNICODE /D _AFXDLL /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"StdAfx.h" /Fp"Debug\kinectUI.pch" /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt CkinectLearn.cpp
-         CkinectLearn.cpp
-     1>c:\opencv\build\include\opencv2\flann\dist.h : warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-     1>c:\opencv\build\include\opencv2\flann\dist.h : warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-     1>c:\opencv\build\include\opencv2\flann\logger.h(66): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files\microsoft visual studio 10.0\vc\include\stdio.h(234) : 'fopen' 선언을 참조하십시오.
-     1>c:\opencv\build\include\opencv2\flann\dist.h : warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-     1>c:\opencv\build\include\opencv2\flann\dist.h : warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+         All outputs are up-to-date.
        ResourceCompile:
          All outputs are up-to-date.
        ManifestResourceCompile:
          All outputs are up-to-date.
        Link:
-         C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\kwon\Documents\GitHub\kinectHR\kinectUI\Debug\kinectUI.exe" /INCREMENTAL /NOLOGO opencv_calib3d243d.lib opencv_contrib243d.lib opencv_core243d.lib opencv_features2d243d.lib opencv_flann243d.lib opencv_gpu243d.lib opencv_haartraining_engined.lib opencv_highgui243d.lib opencv_imgproc243d.lib opencv_legacy243d.lib opencv_ml243d.lib opencv_nonfree243d.lib opencv_objdetect243d.lib opencv_photo243d.lib opencv_stitching243d.lib opencv_ts243d.lib opencv_video243d.lib opencv_videostab243d.lib Kinect10.lib /MANIFEST /ManifestFile:"Debug\kinectUI.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Users\kwon\Documents\GitHub\kinectHR\kinectUI\Debug\kinectUI.pdb" /SUBSYSTEM:WINDOWS /STACK:"2097152" /TLBID:1 /ENTRY:"wWinMainCRTStartup" /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\kwon\Documents\GitHub\kinectHR\kinectUI\Debug\kinectUI.lib" /MACHINE:X86 Debug\kinectUI.res
-         Debug\kinectUI.exe.embed.manifest.res
-         Debug\CkinectLearn.obj
-         Debug\CkinectReco.obj
-         Debug\CvvImage.obj
-         Debug\kinectStream.obj
-         Debug\kinectUI.obj
-         Debug\kinectUIDlg.obj
-         Debug\stdafx.obj
+         All outputs are up-to-date.
        Manifest:
          C:\Program Files\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /out:"Debug\kinectUI.exe.embed.manifest" /manifest Debug\kinectUI.exe.intermediate.manifest "C:\Program Files\Microsoft Visual Studio 10.0\VC\Include\Manifest\dpiaware.manifest"
          All outputs are up-to-date.
-       LinkEmbedManifest:
-         All outputs are up-to-date.
-         kinectUI.vcxproj -> C:\Users\kwon\Documents\GitHub\kinectHR\kinectUI\Debug\kinectUI.exe
        FinalizeBuildStatus:
          Deleting file "Debug\kinectUI.unsuccessfulbuild".
          Touching "Debug\kinectUI.lastbuildstate".
@@ -39,4 +21,4 @@
 
 빌드했습니다.
 
-Time Elapsed 00:00:03.40
+Time Elapsed 00:00:00.22

@@ -197,7 +197,7 @@ CvPoint CKinectStream::SkeletonToScreen(Vector4 skeletonPoint)
 	return cvPoint(screenPointX, screenPointY);
 }
 
-void CKinectStream::CatchHand(const NUI_SKELETON_DATA &position, NUI_SKELETON_POSITION_INDEX lHand, NUI_SKELETON_POSITION_INDEX rHand, IplImage *Skeleton)
+void CKinectStream::CatchHand(const NUI_SKELETON_DATA &position, NUI_SKELETON_POSITION_INDEX lHand, NUI_SKELETON_POSITION_INDEX rHand, IplImage *img)
 {
 	NUI_SKELETON_POSITION_TRACKING_STATE lHandstate = position.eSkeletonPositionTrackingState[lHand];
 	NUI_SKELETON_POSITION_TRACKING_STATE rHand2state = position.eSkeletonPositionTrackingState[rHand];
@@ -207,11 +207,11 @@ void CKinectStream::CatchHand(const NUI_SKELETON_DATA &position, NUI_SKELETON_PO
 	CvPoint rLT = {m_skeletonPoints[rHand].x-50, m_skeletonPoints[rHand].y-50};
 	CvPoint rRB = {m_skeletonPoints[rHand].x+50 ,m_skeletonPoints[rHand].y+50};
 
-	cvRectangle(Skeleton, lLT, lRB, CV_RGB(255,0,0), 2, 8, 0);
-	cvRectangle(Skeleton, rLT, rRB, CV_RGB(255,0,0), 2, 8, 0);
+	cvRectangle(img, lLT, lRB, CV_RGB(255,0,0), 2, 8, 0);
+	cvRectangle(img, rLT, rRB, CV_RGB(255,0,0), 2, 8, 0);
 }
 
-void CKinectStream::DrawSkeleton(const NUI_SKELETON_DATA &position, IplImage *Skeleton)
+void CKinectStream::DrawSkeleton(const NUI_SKELETON_DATA &position, IplImage *img)
 {
 	for (int i = 0; i < NUI_SKELETON_POSITION_COUNT; ++i)
 	{
@@ -241,15 +241,16 @@ void CKinectStream::DrawSkeleton(const NUI_SKELETON_DATA &position, IplImage *Sk
 	rawData[NUI_SKELETON_POSITION_HAND_RIGHT].push_back(p2dRH);
 
 	// skleton 그리기
-	DrawBone(position, NUI_SKELETON_POSITION_SHOULDER_RIGHT, NUI_SKELETON_POSITION_ELBOW_RIGHT, Skeleton);
-	DrawBone(position, NUI_SKELETON_POSITION_ELBOW_RIGHT, NUI_SKELETON_POSITION_WRIST_RIGHT, Skeleton);
-	DrawBone(position, NUI_SKELETON_POSITION_WRIST_RIGHT, NUI_SKELETON_POSITION_HAND_RIGHT, Skeleton);
+	DrawBone(position, NUI_SKELETON_POSITION_SHOULDER_RIGHT, NUI_SKELETON_POSITION_ELBOW_RIGHT, img);
+	DrawBone(position, NUI_SKELETON_POSITION_ELBOW_RIGHT, NUI_SKELETON_POSITION_WRIST_RIGHT, img);
+	DrawBone(position, NUI_SKELETON_POSITION_WRIST_RIGHT, NUI_SKELETON_POSITION_HAND_RIGHT, img);
 
-	DrawBone(position, NUI_SKELETON_POSITION_SHOULDER_LEFT, NUI_SKELETON_POSITION_ELBOW_LEFT, Skeleton);
-	DrawBone(position, NUI_SKELETON_POSITION_ELBOW_LEFT, NUI_SKELETON_POSITION_WRIST_LEFT, Skeleton);
-	DrawBone(position, NUI_SKELETON_POSITION_WRIST_LEFT, NUI_SKELETON_POSITION_HAND_LEFT, Skeleton);
+	DrawBone(position, NUI_SKELETON_POSITION_SHOULDER_LEFT, NUI_SKELETON_POSITION_ELBOW_LEFT, img);
+	DrawBone(position, NUI_SKELETON_POSITION_ELBOW_LEFT, NUI_SKELETON_POSITION_WRIST_LEFT, img);
+	DrawBone(position, NUI_SKELETON_POSITION_WRIST_LEFT, NUI_SKELETON_POSITION_HAND_LEFT, img);
 
-	CatchHand(position,NUI_SKELETON_POSITION_HAND_LEFT, NUI_SKELETON_POSITION_HAND_RIGHT, Skeleton);
+	// 손을 중심으로하는 사각형 그리기
+	CatchHand(position,NUI_SKELETON_POSITION_HAND_LEFT, NUI_SKELETON_POSITION_HAND_RIGHT, img);
 }
 
 void CKinectStream::ApplySkeleton(IplImage *img)

@@ -2,6 +2,7 @@
 
 // 헤더파일 추가
 #include <NuiApi.h>
+#include <NuiSensor.h>
 #include <opencv\cv.h>
 #include <opencv\highgui.h>
 #include <opencv\cxcore.h>
@@ -57,9 +58,9 @@ public:
 
 	// Skeleton
 	CvPoint SkeletonToScreen(Vector4 skeletonPoint);
-	void DrawBone(const NUI_SKELETON_DATA &position, NUI_SKELETON_POSITION_INDEX j1, NUI_SKELETON_POSITION_INDEX j2, IplImage *Skeleton);
-	void CatchHand(const NUI_SKELETON_DATA &position, NUI_SKELETON_POSITION_INDEX lHand, NUI_SKELETON_POSITION_INDEX rHand, IplImage *Skeleton);
-	void DrawSkeleton(const NUI_SKELETON_DATA &position, IplImage *Skeleton);
+	void DrawBone(const NUI_SKELETON_DATA &position, NUI_SKELETON_POSITION_INDEX j1, NUI_SKELETON_POSITION_INDEX j2, IplImage *img);
+	void CatchHand(const NUI_SKELETON_DATA &position, NUI_SKELETON_POSITION_INDEX lHand, NUI_SKELETON_POSITION_INDEX rHand, IplImage *img);
+	void DrawSkeleton(const NUI_SKELETON_DATA &position, IplImage *img);
 	void ApplySkeleton(IplImage *img);
 
 	// get

@@ -60,18 +60,6 @@ void CkinectLearn::OnTimer(UINT_PTR nIDEvent)
 			cvvImage.DrawToHDC(pDC->m_hDC, rect);
 		}
 	}
-	/*
-	{
-	kinectStream.ApplySkeleton(kinectStream.m_depthIpl);
-	CDC *pDC;
-	pDC = m_sDepth.GetDC();
-
-	CRect rect;
-	rect.SetRect(0, 0, (int) (KINECT_WIDTH * VIEW_RATE / 100), (int) (KINECT_HEIGHT * VIEW_RATE / 100));
-
-	cvvImage.CopyOf(kinectStream.m_depthIpl, 3);
-	cvvImage.DrawToHDC(pDC->m_hDC, rect);
-	}*/
 
 	CDialogEx::OnTimer(nIDEvent);
 }
@@ -110,11 +98,11 @@ void CkinectLearn::OnBnClickedButtonLearn()
 				if (raw.size() > 0)
 				{
 					for (pos = raw.begin(); pos != raw.end(); ++pos)
-						fout << pos->x << ',';
+						fout << (int) (pos->x *1000) << ", " << endl;
 					fout << endl;
 
 					for (pos = raw.begin(); pos != raw.end(); ++pos)
-						fout << pos->y << ',';
+						fout << (int) (pos->y *1000) << ", " << endl;
 					fout << endl;
 				}
 			}
