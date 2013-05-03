@@ -139,8 +139,8 @@ void CkinectLearn::OnBnClickedButtonLearn()
 					}
 					fout << endl;*/
 				}
-				kinectStream.rawData[NUI_SKELETON_POSITION_SPINE].clear();
 			}
+			kinectStream.rawData[NUI_SKELETON_POSITION_SPINE].clear();
 		}
 		fout.close();
 	}
