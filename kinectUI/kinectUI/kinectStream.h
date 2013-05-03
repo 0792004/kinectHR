@@ -2,7 +2,6 @@
 
 // 헤더파일 추가
 #include <NuiApi.h>
-#include <NuiSensor.h>
 #include <opencv\cv.h>
 #include <opencv\highgui.h>
 #include <opencv\cxcore.h>

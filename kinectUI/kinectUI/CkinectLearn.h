@@ -7,6 +7,8 @@
 #include <vector>
 #include <fstream>
 
+#define PI		3.1415926f
+
 // CkinectLearn 대화 상자입니다.
 using namespace std;
 
@@ -30,7 +32,11 @@ public:
 	// LEARN MODE
 	bool isLearnMode;
 
+	// file 출력 stream
 	ofstream fout;
+
+	// GetDegree
+	double GetDegree(double x1, double x2, double y1, double y2);
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 지원입니다.

@@ -218,7 +218,11 @@ void CKinectStream::DrawSkeleton(const NUI_SKELETON_DATA &position, IplImage *im
 		m_skeletonPoints[i] = SkeletonToScreen(position.SkeletonPositions[i]);
 	}
 
-	// ¿ÞÂÊ ÆÈ²ÞÄ¡, ¼Õ, ¿À¸¥ÂÊ ÆÈ²ÞÄ¡, ¼ÕÀÇ ÁÂÇ¥°ª ÀúÀå
+	// °¡½¿, ¿ÞÂÊ ÆÈ²ÞÄ¡, ¼Õ, ¿À¸¥ÂÊ ÆÈ²ÞÄ¡, ¼ÕÀÇ ÁÂÇ¥°ª ÀúÀå
+	Point2d p2dSP = Point2d(
+		position.SkeletonPositions[NUI_SKELETON_POSITION_SPINE].x,
+		position.SkeletonPositions[NUI_SKELETON_POSITION_SPINE].y);
+
 	Point2d p2dLE = Point2d(
 		position.SkeletonPositions[NUI_SKELETON_POSITION_ELBOW_LEFT].x,
 		position.SkeletonPositions[NUI_SKELETON_POSITION_ELBOW_LEFT].y);
@@ -235,6 +239,7 @@ void CKinectStream::DrawSkeleton(const NUI_SKELETON_DATA &position, IplImage *im
 		position.SkeletonPositions[NUI_SKELETON_POSITION_HAND_RIGHT].x,
 		position.SkeletonPositions[NUI_SKELETON_POSITION_HAND_RIGHT].y);
 
+	rawData[NUI_SKELETON_POSITION_SPINE].push_back(p2dSP);
 	rawData[NUI_SKELETON_POSITION_ELBOW_LEFT].push_back(p2dLE);
 	rawData[NUI_SKELETON_POSITION_HAND_LEFT].push_back(p2dLH);
 	rawData[NUI_SKELETON_POSITION_ELBOW_RIGHT].push_back(p2dRE);

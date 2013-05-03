@@ -87,26 +87,72 @@ void CkinectLearn::OnBnClickedButtonLearn()
 		m_eSLName.GetWindowTextW(slName);
 		slName += ".txt";
 		path += slName;
-		
+
 		fout.open(path);
 		if (fout.is_open())
 		{
-			for (int i = 0; i < NUI_SKELETON_POSITION_COUNT; i++)
+			for (int i = NUI_SKELETON_POSITION_SPINE + 1; i < NUI_SKELETON_POSITION_COUNT; i++)
 			{
-				vector<Point2d>::const_iterator pos;
-				vector<Point2d> &raw = kinectStream.rawData[i];
+				vector<Point2d>::const_iterator pos;			// SPINE 외 다른 rawData의 iterator
+				vector<Point2d>::const_iterator posSP;			// SPINE rawData의 iterator
+
+				vector<Point2d> &raw = kinectStream.rawData[i];								// i번째 rawDATA
+				vector<Point2d> &rawSP = kinectStream.rawData[NUI_SKELETON_POSITION_SPINE]; // SPINE의 rawDATA
+
 				if (raw.size() > 0)
 				{
-					for (pos = raw.begin(); pos != raw.end(); ++pos)
-						fout << (int) (pos->x *1000) << ", " << endl;
+					const int K = 2;		// K프레임에 한번 데이터 저장
+					int cnt = 0;
+
+					for (posSP = rawSP.begin(), pos = raw.begin(); posSP != rawSP.end(); posSP++, pos++)
+					{
+						cnt++;
+						if (cnt == K)
+						{
+							cnt = 0;
+							fout << (int)(GetDegree(pos->x, posSP->x, pos->y, posSP->y)) << ", " << endl;
+						}
+					}
+					fout << endl;
+					kinectStream.rawData[i].clear();
+
+					/*for (posSP = rawSP.begin(), pos = raw.begin(); posSP != rawSP.end(); posSP++, pos++)
+					{
+					cnt++;
+					if (cnt == K)
+					{
+					cnt = 0;
+					fout << (int) ((pos->x) * 1000) << ", " << endl;
+					}
+					}
 					fout << endl;
 
-					for (pos = raw.begin(); pos != raw.end(); ++pos)
-						fout << (int) (pos->y *1000) << ", " << endl;
-					fout << endl;
+					cnt = 0;
+					for (posSP = rawSP.begin(), pos = raw.begin(); posSP != rawSP.end(); posSP++, pos++)
+					{
+					cnt++;
+					if (cnt == K)
+					{
+					cnt = 0;
+					fout << (int) ((pos->y) * 1000) << ", " << endl;
+					}
+					}
+					fout << endl;*/
 				}
+				kinectStream.rawData[NUI_SKELETON_POSITION_SPINE].clear();
 			}
 		}
 		fout.close();
 	}
+}
+
+double CkinectLearn::GetDegree(double x1, double x2, double y1, double y2)
+{
+	double dx = x2 - x1;
+	double dy = y2 - y1;
+
+	double rad = atan2(dx, dy);
+	double degree = (rad * 180) / PI ;
+
+	return degree;
 }
