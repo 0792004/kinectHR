@@ -219,31 +219,35 @@ void CKinectStream::DrawSkeleton(const NUI_SKELETON_DATA &position, IplImage *im
 	}
 
 	// °¡½¿, ¿ÞÂÊ ÆÈ²ÞÄ¡, ¼Õ, ¿À¸¥ÂÊ ÆÈ²ÞÄ¡, ¼ÕÀÇ ÁÂÇ¥°ª ÀúÀå
-	Point2d p2dSP = Point2d(
+	jointData[NUI_SKELETON_POSITION_SPINE] = 
+		Point2d(
 		position.SkeletonPositions[NUI_SKELETON_POSITION_SPINE].x,
-		position.SkeletonPositions[NUI_SKELETON_POSITION_SPINE].y);
+		position.SkeletonPositions[NUI_SKELETON_POSITION_SPINE].y
+		);
 
-	Point2d p2dLE = Point2d(
+	jointData[NUI_SKELETON_POSITION_ELBOW_LEFT] = 
+		Point2d(
 		position.SkeletonPositions[NUI_SKELETON_POSITION_ELBOW_LEFT].x,
-		position.SkeletonPositions[NUI_SKELETON_POSITION_ELBOW_LEFT].y);
+		position.SkeletonPositions[NUI_SKELETON_POSITION_ELBOW_LEFT].y
+		);
 
-	Point2d p2dLH = Point2d(
+	jointData[NUI_SKELETON_POSITION_HAND_LEFT] = 
+		Point2d(
 		position.SkeletonPositions[NUI_SKELETON_POSITION_HAND_LEFT].x,
-		position.SkeletonPositions[NUI_SKELETON_POSITION_HAND_LEFT].y);
+		position.SkeletonPositions[NUI_SKELETON_POSITION_HAND_LEFT].y
+		);
 
-	Point2d p2dRE = Point2d(
+	jointData[NUI_SKELETON_POSITION_ELBOW_RIGHT] = 
+		Point2d(
 		position.SkeletonPositions[NUI_SKELETON_POSITION_ELBOW_RIGHT].x,
-		position.SkeletonPositions[NUI_SKELETON_POSITION_ELBOW_RIGHT].y);
+		position.SkeletonPositions[NUI_SKELETON_POSITION_ELBOW_RIGHT].y
+		);
 
-	Point2d p2dRH = Point2d(
+	jointData[NUI_SKELETON_POSITION_HAND_RIGHT] =
+		Point2d(
 		position.SkeletonPositions[NUI_SKELETON_POSITION_HAND_RIGHT].x,
-		position.SkeletonPositions[NUI_SKELETON_POSITION_HAND_RIGHT].y);
-
-	rawData[NUI_SKELETON_POSITION_SPINE].push_back(p2dSP);
-	rawData[NUI_SKELETON_POSITION_ELBOW_LEFT].push_back(p2dLE);
-	rawData[NUI_SKELETON_POSITION_HAND_LEFT].push_back(p2dLH);
-	rawData[NUI_SKELETON_POSITION_ELBOW_RIGHT].push_back(p2dRE);
-	rawData[NUI_SKELETON_POSITION_HAND_RIGHT].push_back(p2dRH);
+		position.SkeletonPositions[NUI_SKELETON_POSITION_HAND_RIGHT].y
+		);
 
 	// skleton ±×¸®±â
 	DrawBone(position, NUI_SKELETON_POSITION_SHOULDER_RIGHT, NUI_SKELETON_POSITION_ELBOW_RIGHT, img);
@@ -276,13 +280,12 @@ void CKinectStream::ApplySkeleton(IplImage *img)
 
 		if(NUI_SKELETON_TRACKED == state)
 		{
-			if (i == 0) m_skeletonData = skeletonFrame.SkeletonData[i];
 			DrawSkeleton(skeletonFrame.SkeletonData[i], img);
 		}
 	}
 }
 
-vector<Point2d> CKinectStream::GetSkeletonPositon(NUI_SKELETON_POSITION_INDEX idx)
+Point2d CKinectStream::GetSkeletonPositon(int idx)
 {
-	return rawData[NUI_SKELETON_POSITION_ELBOW_LEFT];
+	return jointData[idx];
 }

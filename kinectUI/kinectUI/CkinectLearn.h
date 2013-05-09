@@ -29,14 +29,20 @@ public:
 	// CvvImage
 	CvvImage cvvImage;
 
+	// rawData Vector
+	vector<Point2d> rawData[NUI_SKELETON_POSITION_COUNT];
+
 	// LEARN MODE
 	bool isLearnMode;
 
-	// file 출력 stream
-	ofstream fout;
-
 	// GetDegree
 	double GetDegree(double x1, double x2, double y1, double y2);
+
+	// SaveRawData
+	void SaveRawData(CString name, CString &path);
+
+	// DisplayList
+	void DisplayList(void);
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 지원입니다.
@@ -45,8 +51,10 @@ protected:
 public:
 	CStatic m_sColor;
 	CStatic m_sDepth;
-	CEdit m_eSLName;
+	CString m_strSLName;
+	CListBox m_lSLName;
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnBnClickedButtonRun();
 	afx_msg void OnBnClickedButtonLearn();
+	
 };

@@ -33,11 +33,10 @@ public:
 	HRESULT m_depthHr;
 
 	// Skeleton
-	NUI_SKELETON_DATA m_skeletonData;
 	CvPoint m_skeletonPoints[NUI_SKELETON_POSITION_COUNT];
 
-	// Vetor
-	vector<Point2d> rawData[NUI_SKELETON_POSITION_COUNT];
+	// 관절의 x, y값 저장
+	Point2d jointData[NUI_SKELETON_POSITION_COUNT];
 
 	// 함수
 	// 초기화
@@ -63,5 +62,5 @@ public:
 	void ApplySkeleton(IplImage *img);
 
 	// get
-	vector<Point2d> GetSkeletonPositon(NUI_SKELETON_POSITION_INDEX idx);
+	Point2d GetSkeletonPositon(int idx);
 };
