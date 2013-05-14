@@ -1,0 +1,17 @@
+﻿Build started 2013-04-17 오후 4:17:23.
+     1>Project "C:\Users\kwon\Documents\GitHub\kinectHR\KinectBridgeWithOpenCVBasics-D2D\kinectdialog\kinectdialog.vcxproj" on node 2 (build target(s)).
+     1>InitializeBuildStatus:
+         Touching "Debug\kinectdialog.unsuccessfulbuild".
+       ClCompile:
+         All outputs are up-to-date.
+         C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D _UNICODE /D UNICODE /D _AFXDLL /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"StdAfx.h" /Fp"Debug\kinectdialog.pch" /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt kinectdialog.cpp kinectdialogDlg.cpp
+         kinectdialogDlg.cpp
+     1>c:\users\kwon\documents\github\kinecthr\kinectbridgewithopencvbasics-d2d\kinectdialog\kinectdialogdlg.h(16): error C2065: 'IDD_KINECTDIALOG_DIALOG' : 선언되지 않은 식별자입니다.
+         kinectdialog.cpp
+     1>c:\users\kwon\documents\github\kinecthr\kinectbridgewithopencvbasics-d2d\kinectdialog\kinectdialogdlg.h(16): error C2065: 'IDD_KINECTDIALOG_DIALOG' : 선언되지 않은 식별자입니다.
+         코드를 생성하고 있습니다...
+     1>Done Building Project "C:\Users\kwon\Documents\GitHub\kinectHR\KinectBridgeWithOpenCVBasics-D2D\kinectdialog\kinectdialog.vcxproj" (build target(s)) -- FAILED.
+
+빌드하지 못했습니다.
+
+Time Elapsed 00:00:01.23

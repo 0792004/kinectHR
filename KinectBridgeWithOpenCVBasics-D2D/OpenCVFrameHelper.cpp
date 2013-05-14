@@ -14,6 +14,8 @@ using namespace Microsoft::KinectBridge;
 /// </summary>
 /// <param name="pImage">pointer in which to return the OpenCV image matrix</param>
 /// <returns>S_OK if successful, an error code otherwise</returns>
+
+// color frame data를 image matrix로 변환
 HRESULT OpenCVFrameHelper::GetColorData(Mat* pImage) const
 {
     // Check if image is valid
@@ -29,6 +31,9 @@ HRESULT OpenCVFrameHelper::GetColorData(Mat* pImage) const
     for (UINT y = 0; y < colorHeight; ++y)
     {
         // Get row pointer for color Mat
+		// 한화소를 읽어들임(for문이 0-y,0-x까지 이므로) 
+		// 어떤값? Vec4형값
+
         Vec4b* pColorRow = pImage->ptr<Vec4b>(y);
 
         for (UINT x = 0; x < colorWidth; ++x)
@@ -107,6 +112,8 @@ HRESULT OpenCVFrameHelper::GetDepthDataAsArgb(Mat* pImage) const
             USHORT raw_depth = pDepthRow[x];
 
             // If depth value is valid, convert and copy it
+			// raw_depth가 최대값이 아니면 RGB로 변환하고 복사한다
+			// raw_depth -> pDepthRgbRow에 저장
             if (raw_depth != 65535)
             {
                 UINT8 redPixel, greenPixel, bluePixel;

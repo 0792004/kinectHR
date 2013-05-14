@@ -80,7 +80,8 @@ public:
 	/// <returns>device connection id of Kinect sensor</param>
 	BSTR GetKinectDeviceConnectionId() const;
 
-private:
+	//수정
+//private:
     // Functions:
     /// <summary>
     /// Handles window messages for the class instance
@@ -241,6 +242,14 @@ private:
     HWND m_hWndMain;                            // Main window
     HWND m_hWndStatus;                          // Status bar
 	HFONT m_hStreamInfoFont;					// Font for the stream info text
+
+	// 추가
+	// 화면 상태
+	int m_windowStateID;
+
+	// 버튼 핸들
+	HWND m_hBtnLearn;
+	HWND m_hBtnRecognition;
 
     // Helpers
     Microsoft::KinectBridge::OpenCVFrameHelper m_frameHelper;

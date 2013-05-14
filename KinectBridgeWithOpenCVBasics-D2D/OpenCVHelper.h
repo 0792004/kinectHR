@@ -130,6 +130,10 @@ private:
     HRESULT GetCoordinatesForSkeletonPoint(Vector4 point, LONG* pX, LONG* pY, NUI_IMAGE_RESOLUTION colorResolution, 
         NUI_IMAGE_RESOLUTION depthResolution);
 
+	// handTracking을 위해 추가
+	void CatchHand(Mat* pImg, NUI_SKELETON_DATA* pSkel, NUI_SKELETON_POSITION_INDEX lHand, 
+        NUI_SKELETON_POSITION_INDEX rHand, Point jointPositions[NUI_SKELETON_POSITION_COUNT], Scalar color);
+
     // Variables:
     // Resource IDs of the active filters
     int m_colorFilterID;

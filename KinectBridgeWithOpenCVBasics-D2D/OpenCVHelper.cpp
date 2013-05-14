@@ -40,6 +40,8 @@ void OpenCVHelper::SetColorFilter(int filterID)
 /// Sets the depth image filter to the one corresponding to the given resource ID
 /// </summary>
 /// <param name="filterID">resource ID of filter to use</param>
+
+// WndProc에서 선택한 필터링 값(ID)을 m_depthFilterID에 저장한다.
 void OpenCVHelper::SetDepthFilter(int filterID)
 {
     m_depthFilterID = filterID;
@@ -50,6 +52,7 @@ void OpenCVHelper::SetDepthFilter(int filterID)
 /// </summary>
 /// <param name="pImg">pointer to Mat to filter</param>
 /// <returns>S_OK if successful, an error code otherwise
+
 HRESULT OpenCVHelper::ApplyColorFilter(Mat* pImg)
 {
     // Fail if pointer is invalid
@@ -107,6 +110,8 @@ HRESULT OpenCVHelper::ApplyColorFilter(Mat* pImg)
 /// </summary>
 /// <param name="pImg">pointer to Mat to filter</param>
 /// <returns>S_OK if successful, an error code otherwise</returns>
+
+// SetDepthFileter에서 지정된 값(m_depthFilterID)을 비교하여 실제 필터링 함수를 적용한다.
 HRESULT OpenCVHelper::ApplyDepthFilter(Mat* pImg)
 {
     // Fail if pointer is invalid
@@ -194,6 +199,8 @@ HRESULT OpenCVHelper::DrawSkeletonsInDepthImage(Mat* pImg, NUI_SKELETON_FRAME* p
 /// <param name="colorRes">resolution of color image stream, or NUI_IMAGE_RESOLUTION_INVALID for a depth image</param>
 /// <param name="depthRes">resolution of depth image stream</param>
 /// <returns>S_OK if successful, an error code otherwise</returns>
+
+// depth 화면에 skeleton을 그림
 HRESULT OpenCVHelper::DrawSkeletons(Mat* pImg, NUI_SKELETON_FRAME* pSkeletons, NUI_IMAGE_RESOLUTION colorResolution, 
                                     NUI_IMAGE_RESOLUTION depthResolution)
 {
@@ -272,6 +279,8 @@ void OpenCVHelper::DrawSkeleton(Mat* pImg, NUI_SKELETON_DATA* pSkel, Scalar colo
     DrawBone(pImg, pSkel, NUI_SKELETON_POSITION_ELBOW_RIGHT, NUI_SKELETON_POSITION_WRIST_RIGHT, jointPositions, color);
     DrawBone(pImg, pSkel, NUI_SKELETON_POSITION_WRIST_RIGHT, NUI_SKELETON_POSITION_HAND_RIGHT, jointPositions, color);
 
+	// DrawSkeleton의 leg 그리는 부분을 주석
+	/*
     // Draw left leg
     DrawBone(pImg, pSkel, NUI_SKELETON_POSITION_HIP_LEFT, NUI_SKELETON_POSITION_KNEE_LEFT, jointPositions, color);
     DrawBone(pImg, pSkel, NUI_SKELETON_POSITION_KNEE_LEFT, NUI_SKELETON_POSITION_ANKLE_LEFT, jointPositions, color);
@@ -281,9 +290,12 @@ void OpenCVHelper::DrawSkeleton(Mat* pImg, NUI_SKELETON_DATA* pSkel, Scalar colo
     DrawBone(pImg, pSkel, NUI_SKELETON_POSITION_HIP_RIGHT, NUI_SKELETON_POSITION_KNEE_RIGHT, jointPositions, color);
     DrawBone(pImg, pSkel, NUI_SKELETON_POSITION_KNEE_RIGHT, NUI_SKELETON_POSITION_ANKLE_RIGHT, jointPositions, color);
     DrawBone(pImg, pSkel, NUI_SKELETON_POSITION_ANKLE_RIGHT, NUI_SKELETON_POSITION_FOOT_RIGHT, jointPositions, color);
+	*/
 
     // Draw joints on top of bones
-    for (int j = 0; j < NUI_SKELETON_POSITION_COUNT; ++j)
+    //for (int j = 0; j < NUI_SKELETON_POSITION_COUNT; ++j)
+	// 위에서 leg 부분 주석 처리한 것과 맞추기 위해 바꿈
+	for (int j = 0; j < 12; ++j)
     {
         // Draw a colored circle with a black border for tracked joints
         if (pSkel->eSkeletonPositionTrackingState[j] == NUI_SKELETON_POSITION_TRACKED) 
@@ -297,6 +309,9 @@ void OpenCVHelper::DrawSkeleton(Mat* pImg, NUI_SKELETON_DATA* pSkel, Scalar colo
             circle(*pImg, jointPositions[j], 4, Scalar(255,255,255), 2);
         }
     }
+
+	// CatchHand 추가
+	CatchHand(pImg, pSkel, NUI_SKELETON_POSITION_HAND_LEFT, NUI_SKELETON_POSITION_HAND_RIGHT, jointPositions, CV_RGB(255,0,0));
 }
 
 /// <summary>
@@ -337,6 +352,45 @@ void OpenCVHelper::DrawBone(Mat* pImg, NUI_SKELETON_DATA* pSkel, NUI_SKELETON_PO
     }
 }
 
+void OpenCVHelper::CatchHand(Mat* pImg, NUI_SKELETON_DATA* pSkel, NUI_SKELETON_POSITION_INDEX LHand, 
+                            NUI_SKELETON_POSITION_INDEX RHand, Point jointPositions[NUI_SKELETON_POSITION_COUNT], Scalar color)
+{
+	NUI_SKELETON_POSITION_TRACKING_STATE LHandState = pSkel->eSkeletonPositionTrackingState[LHand];
+    NUI_SKELETON_POSITION_TRACKING_STATE RHandState = pSkel->eSkeletonPositionTrackingState[RHand];
+
+	// Don't draw unless at least one joint is tracked
+	if (LHandState == NUI_SKELETON_POSITION_NOT_TRACKED || LHandState == NUI_SKELETON_POSITION_NOT_TRACKED) 
+    {
+        return;
+    }
+
+    if (RHandState == NUI_SKELETON_POSITION_INFERRED && RHandState == NUI_SKELETON_POSITION_INFERRED) 
+    {
+        return;
+    }
+
+	/*
+	CvPoint lLT = {jointPositions[lHand].x-50, jointPositions[lHand].y-50};
+	CvPoint lRB = {jointPositions[lHand].x+50, jointPositions[lHand].y+50};
+	CvPoint rLT = {jointPositions[rHand].x-50, jointPositions[rHand].y-50};
+	CvPoint rRB = {jointPositions[rHand].x+50 ,jointPositions[rHand].y+50};
+	*/
+
+	Point LLT = (jointPositions[LHand].x-50, jointPositions[LHand].y-50);
+	Point LRB = (jointPositions[LHand].x+50, jointPositions[LHand].y+50);
+	Point RLT = (jointPositions[RHand].x-50, jointPositions[RHand].y-50);
+	Point RRB = (jointPositions[RHand].x+50 ,jointPositions[RHand].y+50);
+
+	//if(lHandstate == NUI_SKELETON_POSITION_TRACKED && rHand2state == NUI_SKELETON_POSITION_TRACKED)//매칭이 부정확하면 그리지 않음
+	//{
+
+	
+	rectangle(*pImg, LLT, LRB, color, 2, 8, 0);
+	rectangle(*pImg, RLT, RRB, color, 2, 8, 0);
+	
+	//}
+}
+
 /// <summary>
 /// Converts a point in skeleton space to coordinates in color or depth space
 /// </summary>
@@ -348,6 +402,7 @@ void OpenCVHelper::DrawBone(Mat* pImg, NUI_SKELETON_DATA* pSkel, NUI_SKELETON_PO
 /// <returns>S_OK if successful, an error code otherwise</param>
 HRESULT OpenCVHelper::GetCoordinatesForSkeletonPoint(Vector4 point, LONG* pX, LONG* pY, 
                                                      NUI_IMAGE_RESOLUTION colorResolution, NUI_IMAGE_RESOLUTION depthResolution)
+													 // 아마도 해상도에 맞게 좌표를 변환해 주는 함수
 {
     // Fail if either pointer is invalid
     if (!pX || !pY) 

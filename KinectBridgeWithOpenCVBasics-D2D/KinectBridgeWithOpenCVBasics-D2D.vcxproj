@@ -77,6 +77,7 @@
     <IncludePath>C:\opencv\build\include\opencv2;C:\opencv\build\include\opencv;C:\opencv\build\include;C:\Program Files\Microsoft SDKs\Kinect\v1.7\inc;$(IncludePath)</IncludePath>
     <SourcePath>C:\opencv\modules\core\src;C:\opencv\modules\imgproc\src;C:\opencv\modules\highgui\src;$(SourcePath)</SourcePath>
     <LibraryPath>C:\opencv\build\x86\vc10\lib;C:\Program Files\Microsoft SDKs\Kinect\v1.7\lib\x86;$(LibraryPath)</LibraryPath>
+    <EmbedManifest>false</EmbedManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -193,4 +194,9 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties RESOURCE_FILE="KinectBridgeWithOpenCVBasics-D2D.rc" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>
