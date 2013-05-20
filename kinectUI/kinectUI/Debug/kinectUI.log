@@ -1,4 +1,4 @@
-﻿Build started 2013-05-09 오후 8:05:45.
+﻿Build started 2013-05-20 오후 2:01:18.
      1>Project "C:\Users\kwon\Documents\GitHub\kinectHR\kinectUI\kinectUI\kinectUI.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
          Creating "Debug\kinectUI.unsuccessfulbuild" because "AlwaysCreate" was specified.
@@ -21,4 +21,4 @@
 
 빌드했습니다.
 
-Time Elapsed 00:00:00.33
+Time Elapsed 00:00:00.99

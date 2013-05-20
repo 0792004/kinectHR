@@ -51,6 +51,9 @@
     <ClInclude Include="CkinectLearn.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="simpleDTW.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="kinectUI.cpp">
@@ -72,6 +75,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="CkinectLearn.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="simpleDTW.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

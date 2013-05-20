@@ -113,6 +113,7 @@
     <ClInclude Include="kinectUI.h" />
     <ClInclude Include="kinectUIDlg.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="simpleDTW.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -123,6 +124,7 @@
     <ClCompile Include="kinectStream.cpp" />
     <ClCompile Include="kinectUI.cpp" />
     <ClCompile Include="kinectUIDlg.cpp" />
+    <ClCompile Include="simpleDTW.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

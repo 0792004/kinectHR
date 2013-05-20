@@ -9,8 +9,6 @@
 // 해상도 정의
 #define KINECT_WIDTH	640
 #define KINECT_HEIGHT	480
-#define VIEW_RATE		70
-#define FPS				30
 
 // cv 네임스페이스 사용
 using namespace cv;
@@ -36,7 +34,7 @@ public:
 	CvPoint m_skeletonPoints[NUI_SKELETON_POSITION_COUNT];
 
 	// 관절의 x, y값 저장
-	Point2d jointData[NUI_SKELETON_POSITION_COUNT];
+	Point2d m_jointData[NUI_SKELETON_POSITION_COUNT];
 
 	// 함수
 	// 초기화
@@ -62,5 +60,5 @@ public:
 	void ApplySkeleton(IplImage *img);
 
 	// get
-	Point2d GetSkeletonPositon(int idx);
+	Point2d GetJointData(int idx);
 };

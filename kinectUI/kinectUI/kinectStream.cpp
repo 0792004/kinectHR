@@ -12,13 +12,9 @@ void CKinectStream::InitializeKinect()
 			| NUI_INITIALIZE_FLAG_USES_SKELETON);
 
 		if(FAILED(hr))
-		{
 			FailToConnect = true;
-		}
 		else
-		{
 			FailToConnect = false;
-		}
 	}
 	while(FailToConnect);
 }
@@ -219,31 +215,31 @@ void CKinectStream::DrawSkeleton(const NUI_SKELETON_DATA &position, IplImage *im
 	}
 
 	// °¡½¿, ¿ÞÂÊ ÆÈ²ÞÄ¡, ¼Õ, ¿À¸¥ÂÊ ÆÈ²ÞÄ¡, ¼ÕÀÇ ÁÂÇ¥°ª ÀúÀå
-	jointData[NUI_SKELETON_POSITION_SPINE] = 
+	m_jointData[NUI_SKELETON_POSITION_SPINE] = 
 		Point2d(
 		position.SkeletonPositions[NUI_SKELETON_POSITION_SPINE].x,
 		position.SkeletonPositions[NUI_SKELETON_POSITION_SPINE].y
 		);
 
-	jointData[NUI_SKELETON_POSITION_ELBOW_LEFT] = 
+	m_jointData[NUI_SKELETON_POSITION_ELBOW_LEFT] = 
 		Point2d(
 		position.SkeletonPositions[NUI_SKELETON_POSITION_ELBOW_LEFT].x,
 		position.SkeletonPositions[NUI_SKELETON_POSITION_ELBOW_LEFT].y
 		);
 
-	jointData[NUI_SKELETON_POSITION_HAND_LEFT] = 
+	m_jointData[NUI_SKELETON_POSITION_HAND_LEFT] = 
 		Point2d(
 		position.SkeletonPositions[NUI_SKELETON_POSITION_HAND_LEFT].x,
 		position.SkeletonPositions[NUI_SKELETON_POSITION_HAND_LEFT].y
 		);
 
-	jointData[NUI_SKELETON_POSITION_ELBOW_RIGHT] = 
+	m_jointData[NUI_SKELETON_POSITION_ELBOW_RIGHT] = 
 		Point2d(
 		position.SkeletonPositions[NUI_SKELETON_POSITION_ELBOW_RIGHT].x,
 		position.SkeletonPositions[NUI_SKELETON_POSITION_ELBOW_RIGHT].y
 		);
 
-	jointData[NUI_SKELETON_POSITION_HAND_RIGHT] =
+	m_jointData[NUI_SKELETON_POSITION_HAND_RIGHT] =
 		Point2d(
 		position.SkeletonPositions[NUI_SKELETON_POSITION_HAND_RIGHT].x,
 		position.SkeletonPositions[NUI_SKELETON_POSITION_HAND_RIGHT].y
@@ -283,9 +279,4 @@ void CKinectStream::ApplySkeleton(IplImage *img)
 			DrawSkeleton(skeletonFrame.SkeletonData[i], img);
 		}
 	}
-}
-
-Point2d CKinectStream::GetSkeletonPositon(int idx)
-{
-	return jointData[idx];
 }
