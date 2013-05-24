@@ -168,6 +168,6 @@ void CkinectUIDlg::OnBnClickedButtonReco()
 
 void CkinectUIDlg::OnBnClickedButtonLearn()
 {
-	CkinectLearn recoDlg;
-	recoDlg.DoModal();
+	CkinectLearn learnDlg;
+	learnDlg.DoModal();
 }

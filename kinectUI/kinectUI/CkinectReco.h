@@ -9,15 +9,16 @@
 #define PATH				"C:\\Users\\kwon\\Documents\\"
 #define LIST_TXT			"sl_list.txt"
 
-#define STRING_SIZE			1024
-#define PI					3.1415926f
-#define VIEW_RATE			70
-#define FPS					30
+#define STRING_SIZE				1024
+#define PI						3.1415926f
+#define VIEW_RATE				70
+#define FPS						30
 
-#define ANGLE_DIFFERENCE	3
-#define MIN_STOPPED_FRAME	3
-#define RECOG_FRAME_ARRANGE	0.50f
-#define RECOG_DTW_RATE		0.88f
+#define ANGLE_DIFFERENCE		3
+#define MIN_STOPPED_FRAME		3
+#define RECOG_FRAME_ARRANGE		0.50f
+#define RECOG_DTW_RATE			0.88f
+#define MAX_RAW_DATA_FRAME		1000
 
 // CkinectReco 대화 상자입니다.
 

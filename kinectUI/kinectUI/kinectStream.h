@@ -16,7 +16,7 @@ using namespace cv;
 class CKinectStream
 {
 public:
-
+	// 데이터
 	// Color
 	IplImage *m_colorIpl;
 	HANDLE m_colorStreamHandle;
@@ -33,32 +33,43 @@ public:
 	// Skeleton
 	CvPoint m_skeletonPoints[NUI_SKELETON_POSITION_COUNT];
 
+	// Finger
+	CvMemStorage* m_storageRight;
+	CvMemStorage* m_storageLeft;
+	CvSeq* m_rightPtSeq;
+	CvSeq* m_leftPtSeq;
+
 	// 관절의 x, y값 저장
 	Point2d m_jointData[NUI_SKELETON_POSITION_COUNT];
 
 	// 함수
 	// 초기화
 	void InitializeKinect();
-
-	//
+	// /
 	void CloseKinect();
 
 	// Color
+	// Color 변수 초기화 및 stream open
 	HRESULT OpenColorStream();
 	HRESULT CreateRGBImage(HANDLE h, IplImage* Color);
 
 	// Depth
 	RGBQUAD Nui_ShortToQuad_Depth(USHORT s);
+	// Depth 변수 초기화 및 stream open
 	HRESULT OpenDepthStream();
 	HRESULT CreateDepthImage(HANDLE h, IplImage* Depth);
 
 	// Skeleton
 	CvPoint SkeletonToScreen(Vector4 skeletonPoint);
 	void DrawBone(const NUI_SKELETON_DATA &position, NUI_SKELETON_POSITION_INDEX j1, NUI_SKELETON_POSITION_INDEX j2, IplImage *img);
-	void CatchHand(const NUI_SKELETON_DATA &position, NUI_SKELETON_POSITION_INDEX lHand, NUI_SKELETON_POSITION_INDEX rHand, IplImage *img);
+	void DrawHandRect(const NUI_SKELETON_DATA &position, NUI_SKELETON_POSITION_INDEX lHand, NUI_SKELETON_POSITION_INDEX rHand, IplImage *img);
 	void DrawSkeleton(const NUI_SKELETON_DATA &position, IplImage *img);
 	void ApplySkeleton(IplImage *img);
 
-	// get
+	// Finger
+	bool checkLine(CvPoint pt1,CvPoint pt2);
+	void DrawConvexHull(IplImage *img);
+
+	// Get
 	Point2d GetJointData(int idx);
 };

@@ -37,7 +37,8 @@ public:
 	vector<Point2d> rawData[NUI_SKELETON_POSITION_COUNT];
 
 	// FONT
-	CFont m_font;
+	CFont m_fontInput;
+	CFont m_fontList;
 
 	// LEARN MODE
 	bool isLearnMode;
@@ -65,5 +66,4 @@ public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnBnClickedButtonRun();
 	afx_msg void OnBnClickedButtonLearn();
-	
 };

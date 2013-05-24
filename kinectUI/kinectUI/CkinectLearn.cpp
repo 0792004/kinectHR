@@ -114,9 +114,10 @@ void CkinectLearn::OnBnClickedButtonLearn()
 void CkinectLearn::InitFont()
 {
 	//m_font.CreateFontW(20, 12, 0, 0, 1, 0, 0, 0, 0, OUT_DEFAULT_PRECIS, 0, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, (LPCTSTR)"굴림");
-	m_font.CreatePointFont(120, (LPCTSTR)"굴림");
-	GetDlgItem(IDC_EDIT_SLNAME)->SetFont(&m_font);
-	GetDlgItem(IDC_LIST_SLNAME)->SetFont(&m_font);
+	m_fontInput.CreatePointFont(350, (LPCTSTR)"굴림");
+	m_fontList.CreatePointFont(150, (LPCTSTR)"굴림");
+	GetDlgItem(IDC_EDIT_SLNAME)->SetFont(&m_fontInput);
+	GetDlgItem(IDC_LIST_SLNAME)->SetFont(&m_fontList);
 }
 
 // p1(x1, y1), p2(x2, y2)
@@ -132,6 +133,21 @@ double CkinectLearn::GetAngle(double x1, double x2, double y1, double y2)
 	return degree;
 }
 
+char* ConvertWCtoC(wchar_t* str)
+{
+    //반환할 char* 변수 선언
+    char* pStr ; 
+
+    //입력받은 wchar_t 변수의 길이를 구함
+    int strSize = WideCharToMultiByte(CP_ACP, 0,str,-1, NULL, 0,NULL, NULL);
+    //char* 메모리 할당
+    pStr = new char[strSize];
+
+    //형 변환 
+    WideCharToMultiByte(CP_ACP, 0, str, -1, pStr, strSize, 0,0);
+    return pStr;
+}
+
 void CkinectLearn::SaveRawData()
 {
 	// sl_list.txt에 수화 이름 저장
@@ -140,15 +156,16 @@ void CkinectLearn::SaveRawData()
 	listPath += "sl_list.txt";
 
 	ofstream fout;
+	locale loc("kor", locale::ctype);
+	fout.imbue(loc);
 	fout.open(listPath, ios::app);
+	
 	if (fout.is_open())
 	{
-		/*fout << name.GetString() << endl;
-		fout << rawData[NUI_SKELETON_POSITION_SPINE].size() << endl;*/
-
-		for (int i = 0; i < m_strSLName.GetLength(); i++)
-			fout.put(m_strSLName.GetAt(i));
-		fout.put('\n');
+		// 한글을 파일입출력 하기 위하여
+		// wchar_t -> char형으로 변환
+		wchar_t* wstr = T2W(m_strSLName.GetBuffer(0));
+		fout << ConvertWCtoC(wstr) << endl;
 		fout << rawData[NUI_SKELETON_POSITION_SPINE].size() << endl;
 	}
 	fout.close();
@@ -158,6 +175,7 @@ void CkinectLearn::SaveRawData()
 	slPath += m_strSLName;
 	slPath += ".txt";
 	// name(수화명).txt에 각종 데이터 저장
+	//ofstream fout;
 	fout.open(slPath);
 	if (fout.is_open())
 	{

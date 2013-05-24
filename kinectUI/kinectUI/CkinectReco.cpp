@@ -202,28 +202,33 @@ void CkinectReco::RecogAction()
 			for (int i = 0; i < ANGLE_DATA_COUNT; i++)
 				rawAngleData[i].push_back(tempAngleData[i]);
 
-			if (rawAngleData[0].size() >= MIN_STOPPED_FRAME)
+			if (rawAngleData[0].size() < MAX_RAW_DATA_FRAME)
 			{
-				for (int i = 0; i < ANGLE_DATA_COUNT; i++)
+				if (rawAngleData[0].size() >= MIN_STOPPED_FRAME)
 				{
-					int cnt = 0;
-					for (int j = rawAngleData[i].size() - 2; cnt < MIN_STOPPED_FRAME - 1; j--)
+					for (int i = 0; i < ANGLE_DATA_COUNT; i++)
 					{
-						if (rawAngleData[i].at(rawAngleData[i].size() - 1) == rawAngleData[i].at(j))
-							cnt++;
-						else
-							break;
-					}
+						int cnt = 0;
+						for (int j = rawAngleData[i].size() - 2; cnt < MIN_STOPPED_FRAME - 1; j--)
+						{
+							if (rawAngleData[i].at(rawAngleData[i].size() - 1) == rawAngleData[i].at(j))
+								cnt++;
+							else
+								break;
+						}
 
-					// MIN_STOPPED_FRAME만큼 같은 값이 연속하지 않는 다면 RECOG_MODE = SIGN이다
-					if (cnt < MIN_STOPPED_FRAME - 1)
-					{
-						RECOG_MODE = SIGN;
-						break;
+						// MIN_STOPPED_FRAME만큼 같은 값이 연속하지 않는 다면 RECOG_MODE = SIGN이다
+						if (cnt < MIN_STOPPED_FRAME - 1)
+						{
+							RECOG_MODE = SIGN;
+							break;
+						}
+						RECOG_MODE = RECOG;
 					}
-					RECOG_MODE = RECOG;
 				}
 			}
+			else
+				RECOG_MODE = RECOG;
 		}
 		break;
 
@@ -282,13 +287,13 @@ void CkinectReco::RecogAction()
 						fout.open(outPath, ios::app);
 						if (fout.is_open())
 						{
-							fout << i << endl;		
-							for (int j = 1; j <= fileData[i].size(); j++)
-							{
-								for (int k = 1; k <= rawAngleData[i].size(); k++)
-									fout << f[j][k] << "\t";
-								fout << endl;
-							}
+						fout << i << endl;		
+						for (int j = 1; j <= fileData[i].size(); j++)
+						{
+						for (int k = 1; k <= rawAngleData[i].size(); k++)
+						fout << f[j][k] << "\t";
+						fout << endl;
+						}
 						}
 						fout << "Similarity = " << similarity << endl;
 						fout.close();*/
