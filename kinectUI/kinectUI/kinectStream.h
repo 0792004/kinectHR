@@ -44,7 +44,7 @@ public:
 
 	// 함수
 	// 초기화
-	void InitializeKinect();
+	bool InitializeKinect();
 	// /
 	void CloseKinect();
 

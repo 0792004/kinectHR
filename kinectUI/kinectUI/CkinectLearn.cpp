@@ -79,12 +79,16 @@ void CkinectLearn::OnTimer(UINT_PTR nIDEvent)
 
 void CkinectLearn::OnBnClickedButtonRun()
 {
-	InitFont();
-	kinectStream.InitializeKinect();
-	kinectStream.OpenColorStream();
-	kinectStream.OpenDepthStream();
-	DisplayList();
-	SetTimer(1, 1000 / FPS, NULL);
+	if (kinectStream.InitializeKinect())
+	{
+		kinectStream.OpenColorStream();
+		kinectStream.OpenDepthStream();
+		InitFont();
+		DisplayList();
+		SetTimer(1, 1000 / FPS, NULL);
+	}
+	else
+		MessageBox(_T("Kinect 연결을 확인하고 프로그램을 다시 시작 하십시오."));
 }
 
 

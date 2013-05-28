@@ -70,13 +70,17 @@ void CkinectReco::OnTimer(UINT_PTR nIDEvent)
 
 void CkinectReco::OnBnClickedButtonRun()
 {
-	InitFont();
-	InitRecogTable();
-	kinectStream.InitializeKinect();
-	kinectStream.OpenColorStream();
-	kinectStream.OpenDepthStream();
-	RECOG_MODE = FIRST;
-	SetTimer(1, 1000 / FPS, NULL);
+	if (kinectStream.InitializeKinect())
+	{
+		kinectStream.OpenColorStream();
+		kinectStream.OpenDepthStream();
+		InitFont();
+		InitRecogTable();
+		RECOG_MODE = FIRST;
+		SetTimer(1, 1000 / FPS, NULL);
+	}
+	else
+		MessageBox(_T("Kinect 연결을 확인하고 프로그램을 다시 시작 하십시오."));
 }
 
 void CkinectReco::InitRecogTable()

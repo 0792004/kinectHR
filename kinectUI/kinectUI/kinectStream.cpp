@@ -1,9 +1,9 @@
 #include "stdafx.h"
 #include "kinectStream.h"
 
-void CKinectStream::InitializeKinect()
+bool CKinectStream::InitializeKinect()
 {
-	bool FailToConnect;
+	/*bool FailToConnect;
 
 	do
 	{
@@ -12,11 +12,21 @@ void CKinectStream::InitializeKinect()
 			| NUI_INITIALIZE_FLAG_USES_SKELETON);
 
 		if(FAILED(hr))
+		{
 			FailToConnect = true;
+		}
 		else
 			FailToConnect = false;
 	}
-	while(FailToConnect);
+	while(FailToConnect);*/
+	HRESULT hr = NuiInitialize(NUI_INITIALIZE_FLAG_USES_COLOR
+			| NUI_INITIALIZE_FLAG_USES_DEPTH_AND_PLAYER_INDEX
+			| NUI_INITIALIZE_FLAG_USES_SKELETON);
+
+	if (FAILED(hr))
+		return false;
+	else
+		return true;
 }
 
 void CKinectStream::CloseKinect()
