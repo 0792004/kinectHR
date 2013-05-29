@@ -7,7 +7,8 @@
 #include <vector>
 #include <fstream>
 
-#define PATH			"C:\\Users\\kwon\\Documents\\"
+//#define PATH			"C:\\Users\\kwon\\Documents\\"
+#define PATH			""
 #define LIST_TXT		"sl_list.txt"
 #define STRING_SIZE		1024
 #define PI				3.1415926f

@@ -6,7 +6,8 @@
 #include "CvvImage.h"
 #include "simpleDTW.h"
 
-#define PATH				"C:\\Users\\kwon\\Documents\\"
+//#define PATH				"C:\\Users\\kwon\\Documents\\"
+#define PATH				""
 #define LIST_TXT			"sl_list.txt"
 
 #define STRING_SIZE				1024
@@ -45,11 +46,11 @@ public:
 
 	// ANGLE_DATA_INDEX
 	enum _ANGLE_DATA_INDEX {
-		LE_TO_SP	=	0,
-		LH_TO_SP	=	(LE_TO_SP + 1),
-		RE_TO_SP	=	(LH_TO_SP + 1),
-		RH_TO_SP	=	(RE_TO_SP + 1),
-		LE			=	(RH_TO_SP + 1),
+		LE_AND_SP	=	0,
+		LH_AND_SP	=	(LE_AND_SP + 1),
+		RE_AND_SP	=	(LH_AND_SP + 1),
+		RH_AND_SP	=	(RE_AND_SP + 1),
+		LE			=	(RH_AND_SP + 1),
 		RE			=	(LE + 1),
 		ANGLE_DATA_COUNT	=	(RE + 1)
 	}ANGLE_DATA_INDEX;
@@ -67,27 +68,20 @@ public:
 	// preJointData
 	Point2d preJointData[NUI_SKELETON_POSITION_COUNT];
 
-	typedef struct RecogTable {
+	typedef struct SignTable {
 		char slName[STRING_SIZE];
 		int frameCount;
 		bool isInArrange;
 		float silmilarity;
-	}RecogTable;
+	}SignTable;
 
-	vector<RecogTable> recogTable;
+	vector<SignTable> signTable;
 
-	// SetRecogTable
-	void InitRecogTable();
-
+	
+	void InitSignTable();
 	void InitFont();
-
-	// GetAngle
 	double GetAngle(double x1, double x2, double y1, double y2);
-
-	// SetAngle
 	void SetAngleData(int *data);
-
-	// 
 	void RecogAction();
 
 protected:

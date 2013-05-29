@@ -47,7 +47,13 @@ void CkinectLearn::OnTimer(UINT_PTR nIDEvent)
 	{
 		if (!FAILED(kinectStream.CreateDepthImage(kinectStream.m_depthStreamHandle, kinectStream.m_depthIpl)))
 		{
+			// 스켈레톤 그리기
 			kinectStream.ApplySkeleton(kinectStream.m_depthIpl);
+			// 손을 중심으로하는 사각형 그리기
+			//DrawHandRect(position,NUI_SKELETON_POSITION_HAND_LEFT, NUI_SKELETON_POSITION_HAND_RIGHT, img);
+			// ConvexHull 그리기
+			kinectStream.DrawConvexHull(kinectStream.m_depthIpl);
+
 			CDC *pDC;
 			pDC = m_sColor.GetDC();
 

@@ -3,22 +3,6 @@
 
 bool CKinectStream::InitializeKinect()
 {
-	/*bool FailToConnect;
-
-	do
-	{
-		HRESULT hr = NuiInitialize(NUI_INITIALIZE_FLAG_USES_COLOR
-			| NUI_INITIALIZE_FLAG_USES_DEPTH_AND_PLAYER_INDEX
-			| NUI_INITIALIZE_FLAG_USES_SKELETON);
-
-		if(FAILED(hr))
-		{
-			FailToConnect = true;
-		}
-		else
-			FailToConnect = false;
-	}
-	while(FailToConnect);*/
 	HRESULT hr = NuiInitialize(NUI_INITIALIZE_FLAG_USES_COLOR
 			| NUI_INITIALIZE_FLAG_USES_DEPTH_AND_PLAYER_INDEX
 			| NUI_INITIALIZE_FLAG_USES_SKELETON);
@@ -31,12 +15,12 @@ bool CKinectStream::InitializeKinect()
 
 void CKinectStream::CloseKinect()
 {
-	/*cvReleaseImageHeader(&m_colorIpl);
+	cvReleaseImageHeader(&m_colorIpl);
 	cvReleaseImageHeader(&m_depthIpl);
 	this->m_colorStreamHandle = NULL;
 	this->m_depthStreamHandle = NULL;
 	this->m_nextColorFrameEvent = NULL;
-	this->m_nextDepthFrameEvent = NULL;*/
+	this->m_nextDepthFrameEvent = NULL;
 	NuiShutdown();
 }
 
@@ -55,16 +39,13 @@ HRESULT CKinectStream::OpenColorStream()
 	{
 		return 0;
 	}
-
 }
 
 HRESULT CKinectStream::CreateRGBImage(HANDLE h, IplImage* Color)
 {
 	const NUI_IMAGE_FRAME *pImageFrame = NULL;
 
-	//HRESULT hr = NuiImageStreamGetNextFrame(h, 1000, &pImageFrame);
 	HRESULT hr = NuiImageStreamGetNextFrame(h, 0, &pImageFrame);
-
 	if(FAILED(hr))
 	{
 		return -1;
@@ -113,11 +94,6 @@ HRESULT CKinectStream::OpenDepthStream()
 	m_depthIpl = cvCreateImage(cvSize(KINECT_WIDTH, KINECT_HEIGHT), IPL_DEPTH_8U, 3);
 	m_depthHr = NuiImageStreamOpen(NUI_IMAGE_TYPE_DEPTH_AND_PLAYER_INDEX, NUI_IMAGE_RESOLUTION_640x480,
 		0, 2, m_nextDepthFrameEvent, &m_depthStreamHandle);
-
-	/*m_storageRight = cvCreateMemStorage(0);
-	m_storageLeft = cvCreateMemStorage(0);
-	m_rightPtSeq = cvCreateSeq(CV_SEQ_KIND_GENERIC | CV_32SC2, sizeof(CvContour), sizeof(CvPoint), m_storageRight);
-	m_leftPtSeq = cvCreateSeq(CV_SEQ_KIND_GENERIC | CV_32SC2, sizeof(CvContour), sizeof(CvPoint), m_storageLeft);*/
 
 	if (FAILED(m_depthHr))
 	{
@@ -308,12 +284,6 @@ void CKinectStream::DrawSkeleton(const NUI_SKELETON_DATA &position, IplImage *im
 	DrawBone(position, NUI_SKELETON_POSITION_SHOULDER_LEFT, NUI_SKELETON_POSITION_ELBOW_LEFT, img);
 	DrawBone(position, NUI_SKELETON_POSITION_ELBOW_LEFT, NUI_SKELETON_POSITION_WRIST_LEFT, img);
 	DrawBone(position, NUI_SKELETON_POSITION_WRIST_LEFT, NUI_SKELETON_POSITION_HAND_LEFT, img);
-
-	// 손을 중심으로하는 사각형 그리기
-	//DrawHandRect(position,NUI_SKELETON_POSITION_HAND_LEFT, NUI_SKELETON_POSITION_HAND_RIGHT, img);
-	
-	// ConvexHull 그리기
-	DrawConvexHull(img);
 }
 
 void CKinectStream::ApplySkeleton(IplImage *img)

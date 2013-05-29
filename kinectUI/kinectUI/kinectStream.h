@@ -51,12 +51,14 @@ public:
 	// Color
 	// Color 변수 초기화 및 stream open
 	HRESULT OpenColorStream();
+	// Color Image 생성
 	HRESULT CreateRGBImage(HANDLE h, IplImage* Color);
 
 	// Depth
 	RGBQUAD Nui_ShortToQuad_Depth(USHORT s);
 	// Depth 변수 초기화 및 stream open
 	HRESULT OpenDepthStream();
+	// Depth Image 생성
 	HRESULT CreateDepthImage(HANDLE h, IplImage* Depth);
 
 	// Skeleton

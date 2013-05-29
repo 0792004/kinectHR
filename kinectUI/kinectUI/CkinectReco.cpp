@@ -40,7 +40,14 @@ void CkinectReco::OnTimer(UINT_PTR nIDEvent)
 	{
 		if (!FAILED(kinectStream.CreateDepthImage(kinectStream.m_depthStreamHandle, kinectStream.m_depthIpl)))
 		{
+			// 스켈레톤 그리기
 			kinectStream.ApplySkeleton(kinectStream.m_depthIpl);
+			// 손을 중심으로하는 사각형 그리기
+			//DrawHandRect(position,NUI_SKELETON_POSITION_HAND_LEFT, NUI_SKELETON_POSITION_HAND_RIGHT, img);
+			// ConvexHull 그리기
+			kinectStream.DrawConvexHull(kinectStream.m_depthIpl);
+
+			// picture control에 color, depth image를 그린다
 			CDC *pDC;
 			pDC = m_sColor.GetDC();
 
@@ -54,10 +61,12 @@ void CkinectReco::OnTimer(UINT_PTR nIDEvent)
 			cvvImage.CopyOf(kinectStream.m_depthIpl, 3);
 			cvvImage.DrawToHDC(pDC->m_hDC, rect);
 
+			// 사람을 인식한 경우(SPINE값이 있는 경우) RecogAction함수를 실행
 			if (kinectStream.m_jointData[NUI_SKELETON_POSITION_SPINE].x != 0.0f
 				&& kinectStream.m_jointData[NUI_SKELETON_POSITION_SPINE].y != 0.0f)
 				RecogAction();
 
+			// kinect의 jointData를 저장한다
 			for (int i = 0; i < NUI_SKELETON_POSITION_COUNT; i++)
 				preJointData[i] = kinectStream.m_jointData[NUI_SKELETON_POSITION_SPINE];
 		}
@@ -75,7 +84,7 @@ void CkinectReco::OnBnClickedButtonRun()
 		kinectStream.OpenColorStream();
 		kinectStream.OpenDepthStream();
 		InitFont();
-		InitRecogTable();
+		InitSignTable();
 		RECOG_MODE = FIRST;
 		SetTimer(1, 1000 / FPS, NULL);
 	}
@@ -83,7 +92,7 @@ void CkinectReco::OnBnClickedButtonRun()
 		MessageBox(_T("Kinect 연결을 확인하고 프로그램을 다시 시작 하십시오."));
 }
 
-void CkinectReco::InitRecogTable()
+void CkinectReco::InitSignTable()
 {
 	CString listPath;
 	listPath += PATH;
@@ -95,16 +104,16 @@ void CkinectReco::InitRecogTable()
 	{
 		char slName[STRING_SIZE];
 		char slLen[STRING_SIZE];
-		RecogTable tRecogTable;
+		SignTable tSignTable;
 
 		while (listfin.getline(slName, STRING_SIZE))
 		{
 			listfin.getline(slLen, STRING_SIZE);	
-			strcpy(tRecogTable.slName, slName);
-			tRecogTable.frameCount = atoi(slLen);
-			tRecogTable.isInArrange = false;
-			tRecogTable.silmilarity = 0.0f;
-			recogTable.push_back(tRecogTable);
+			strcpy(tSignTable.slName, slName);
+			tSignTable.frameCount = atoi(slLen);
+			tSignTable.isInArrange = false;
+			tSignTable.silmilarity = 0.0f;
+			signTable.push_back(tSignTable);
 		}
 	}
 	listfin.close();
@@ -134,25 +143,25 @@ double CkinectReco::GetAngle(double x1, double x2, double y1, double y2)
 
 void CkinectReco::SetAngleData(int *data)
 {
-	data[LE_TO_SP] = GetAngle(
+	data[LE_AND_SP] = GetAngle(
 		kinectStream.m_jointData[NUI_SKELETON_POSITION_SPINE].x,
 		kinectStream.m_jointData[NUI_SKELETON_POSITION_ELBOW_LEFT].x,
 		kinectStream.m_jointData[NUI_SKELETON_POSITION_SPINE].y,
 		kinectStream.m_jointData[NUI_SKELETON_POSITION_ELBOW_LEFT].y);
 
-	data[LH_TO_SP] = GetAngle(
+	data[LH_AND_SP] = GetAngle(
 		kinectStream.m_jointData[NUI_SKELETON_POSITION_SPINE].x,
 		kinectStream.m_jointData[NUI_SKELETON_POSITION_HAND_LEFT].x,
 		kinectStream.m_jointData[NUI_SKELETON_POSITION_SPINE].y,
 		kinectStream.m_jointData[NUI_SKELETON_POSITION_HAND_LEFT].y);
 
-	data[RE_TO_SP] = GetAngle(
+	data[RE_AND_SP] = GetAngle(
 		kinectStream.m_jointData[NUI_SKELETON_POSITION_SPINE].x,
 		kinectStream.m_jointData[NUI_SKELETON_POSITION_ELBOW_RIGHT].x,
 		kinectStream.m_jointData[NUI_SKELETON_POSITION_SPINE].y,
 		kinectStream.m_jointData[NUI_SKELETON_POSITION_ELBOW_RIGHT].y);
 
-	data[RH_TO_SP] = GetAngle(
+	data[RH_AND_SP] = GetAngle(
 		kinectStream.m_jointData[NUI_SKELETON_POSITION_SPINE].x,
 		kinectStream.m_jointData[NUI_SKELETON_POSITION_HAND_RIGHT].x,
 		kinectStream.m_jointData[NUI_SKELETON_POSITION_SPINE].y,
@@ -171,10 +180,12 @@ void CkinectReco::SetAngleData(int *data)
 		kinectStream.m_jointData[NUI_SKELETON_POSITION_HAND_RIGHT].y);
 }
 
+// RECOG_MODE에 따라 RecogAction을 취한다
 void CkinectReco::RecogAction()
 {
 	switch (RECOG_MODE)
 	{
+	// 사람의 AngleData를 저장한다
 	case FIRST:
 		{
 			CString msg("FIRST");
@@ -184,17 +195,19 @@ void CkinectReco::RecogAction()
 		}
 		break;
 
+	// FIRST에서 저장한 값과 현재의 데이터가 ANGLE_DIFFERENCE 이상 차이 난다면 RECOG_MODE를 SIGN으로 바꾼다
 	case STOP:
 		{
 			int tempAngleData[ANGLE_DATA_COUNT];
 			SetAngleData(tempAngleData);
 
-			if ((abs(firstAngleData[LH_TO_SP] - tempAngleData[LH_TO_SP]) > ANGLE_DIFFERENCE)
-				|| (abs(firstAngleData[RH_TO_SP] - tempAngleData[RH_TO_SP]) > ANGLE_DIFFERENCE))
+			if ((abs(firstAngleData[LH_AND_SP] - tempAngleData[LH_AND_SP]) >= ANGLE_DIFFERENCE)
+				|| (abs(firstAngleData[RH_AND_SP] - tempAngleData[RH_AND_SP]) >= ANGLE_DIFFERENCE))
 				RECOG_MODE = SIGN;
 		}
 		break;
 
+	// rawAngleData를 저장한다
 	case SIGN:
 		{
 			CString msg("SIGN");
@@ -206,7 +219,7 @@ void CkinectReco::RecogAction()
 			for (int i = 0; i < ANGLE_DATA_COUNT; i++)
 				rawAngleData[i].push_back(tempAngleData[i]);
 
-			if (rawAngleData[0].size() < MAX_RAW_DATA_FRAME)
+			if (rawAngleData[0].size() <= MAX_RAW_DATA_FRAME)
 			{
 				if (rawAngleData[0].size() >= MIN_STOPPED_FRAME)
 				{
@@ -233,9 +246,11 @@ void CkinectReco::RecogAction()
 			}
 			else
 				RECOG_MODE = RECOG;
+
 		}
 		break;
 
+	// signTable중에서 frame수가 +-0.5배 안에 들어오면 DTW를 이용해 비교한다
 	case RECOG:
 		{
 			CString msg("RECOG");
@@ -243,22 +258,23 @@ void CkinectReco::RecogAction()
 
 			vector<int> fileData[ANGLE_DATA_COUNT];
 
-			CString path;
-			path = "C:\\Users\\kwon\\Documents\\";
-
-			// recogTable의 frameCount가 rawAngleData의 RECOG_FRAME_ARRANGE내에 있는 것만 비교한다
-			for (int i = 0; i < recogTable.size(); i++)
+			// SignTable의 frameCount가 rawAngleData의 RECOG_FRAME_ARRANGE내에 있는 것만 비교한다
+			for (int i = 0; i < signTable.size(); i++)
 			{
-				RecogTable &iRecogTable = recogTable.at(i);
+				SignTable &iSignTable = signTable.at(i);
 
-				if (abs(iRecogTable.frameCount - (int)(rawAngleData[0].size()))
-					<= (rawAngleData[0].size() * RECOG_FRAME_ARRANGE))
+				if (abs(iSignTable.frameCount - (int)(rawAngleData[0].size()))
+					<= (int)(rawAngleData[0].size() * RECOG_FRAME_ARRANGE))
 				{
-					iRecogTable.isInArrange = true;
+					iSignTable.isInArrange = true;
 
 					// RECOG_FRAME_ARRANGE내에 있다면 해당 파일을 OPEN
 					// fileData를 추출한다
-					CString slPath = path + iRecogTable.slName + ".txt";
+					CString slPath;
+					slPath += PATH;
+					slPath += iSignTable.slName;
+					slPath += ".txt";
+
 					ifstream slfin;
 					slfin.open(slPath);
 					if (slfin.is_open())
@@ -284,28 +300,11 @@ void CkinectReco::RecogAction()
 						int max = (180 - (-180)) * longSize;
 						float similarity = (max - dtw.getBackwardSum()) / (float) max;
 						totSimilarity += similarity;
-
-						/*int **f = dtw.getFMatrix();
-						fstream fout;
-						CString outPath = path + "output.txt";
-						fout.open(outPath, ios::app);
-						if (fout.is_open())
-						{
-						fout << i << endl;		
-						for (int j = 1; j <= fileData[i].size(); j++)
-						{
-						for (int k = 1; k <= rawAngleData[i].size(); k++)
-						fout << f[j][k] << "\t";
-						fout << endl;
-						}
-						}
-						fout << "Similarity = " << similarity << endl;
-						fout.close();*/
 					}
 
 					// AverageSimilarity를 구한다
 					float avgSimilarity = totSimilarity / ANGLE_DATA_COUNT;
-					iRecogTable.silmilarity = avgSimilarity;
+					iSignTable.silmilarity = avgSimilarity;
 
 					// fileData벡터 clear
 					for (int i = 0; i < ANGLE_DATA_COUNT; i++)
@@ -313,36 +312,34 @@ void CkinectReco::RecogAction()
 				}
 			}
 
-			// 비교한 데이터 중에 가장 높은 Similarity를 구한다
+			// 비교한 수화 중에 가장 높은 Similarity를 구한다
 			float maxSimilarity = 0;
 			int maxIdx = - 1;
-			for (int i = 0; i < recogTable.size(); i++)
+			for (int i = 0; i < signTable.size(); i++)
 			{
-				if (recogTable.at(i).isInArrange)
+				SignTable &iSignTable = signTable.at(i);
+				if (iSignTable.isInArrange)
 				{
-					recogTable.at(i).isInArrange = false;
-					if (recogTable.at(i).silmilarity > maxSimilarity)
+					signTable.at(i).isInArrange = false;
+					if (iSignTable.silmilarity > maxSimilarity)
 					{
-						maxSimilarity = recogTable.at(i).silmilarity;
+						maxSimilarity =iSignTable.silmilarity;
 						maxIdx = i;
 					}
 				}
 			}
 
 			// 출력
-			CString strSim;
-			CString strResult;
-			strSim.Format(_T("%1.2f"), maxSimilarity);
-			strResult += strSim;
-			strResult += " ";
-
-			if (maxSimilarity >= RECOG_DTW_RATE)
-			{	
-				strResult += recogTable.at(maxIdx).slName;
-				strResult += " OK";
+			if (maxIdx != -1)
+			{
+				CString strSimilarity;
+				CString strResult;
+				strSimilarity.Format(_T("%1.2f"), maxSimilarity);
+				strResult += strSimilarity;
+				strResult += " ";
+				strResult += signTable.at(maxIdx).slName;
+				SetDlgItemText(IDC_STATIC_RESULT, strResult);
 			}
-
-			SetDlgItemText(IDC_STATIC_RESULT, strResult);
 
 			for (int i = 0; i < ANGLE_DATA_COUNT; i++)
 				rawAngleData[i].clear();
