@@ -35,4 +35,5 @@ public:
 	CButton m_btnReco;
 	afx_msg void OnBnClickedButtonReco();
 	afx_msg void OnBnClickedButtonLearn();
+	afx_msg void OnBnClickedButtonSsettings();
 };

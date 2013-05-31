@@ -65,6 +65,9 @@ void CkinectReco::OnTimer(UINT_PTR nIDEvent)
 			if (kinectStream.m_jointData[NUI_SKELETON_POSITION_SPINE].x != 0.0f
 				&& kinectStream.m_jointData[NUI_SKELETON_POSITION_SPINE].y != 0.0f)
 				RecogAction();
+			/*if (kinectStream.m_jointData[NUI_SKELETON_POSITION_HAND_RIGHT].x != 0.0f
+				&& kinectStream.m_jointData[NUI_SKELETON_POSITION_HAND_RIGHT].y != 0.0f)
+				TemplateMatching();*/
 
 			// kinect의 jointData를 저장한다
 			for (int i = 0; i < NUI_SKELETON_POSITION_COUNT; i++)
@@ -79,24 +82,41 @@ void CkinectReco::OnTimer(UINT_PTR nIDEvent)
 
 void CkinectReco::OnBnClickedButtonRun()
 {
+	// settins.ini 파일을 읽어들임
+	if (!settings.InitSettings())
+	{
+		MessageBox(_T("settings.ini 파일을 확인하고 프로그램을 다시 시작하십시오."));
+		return;
+	}
+
+	// kinect 초기화
 	if (kinectStream.InitializeKinect())
 	{
 		kinectStream.OpenColorStream();
 		kinectStream.OpenDepthStream();
 		InitFont();
 		InitSignTable();
+		//InitImgTable();
 		RECOG_MODE = FIRST;
-		SetTimer(1, 1000 / FPS, NULL);
+		SetTimer(1, 1000 / settings.FPS, NULL);
 	}
 	else
 		MessageBox(_T("Kinect 연결을 확인하고 프로그램을 다시 시작 하십시오."));
 }
 
+void CkinectReco::InitFont()
+{
+	m_fontRecoMode.CreatePointFont(350, (LPCTSTR)"굴림");
+	m_fontResult.CreatePointFont(250, (LPCTSTR)"굴림");
+	GetDlgItem(IDC_STATIC_RECOG_MODE)->SetFont(&m_fontRecoMode);
+	GetDlgItem(IDC_STATIC_RESULT)->SetFont(&m_fontResult);
+}
+
 void CkinectReco::InitSignTable()
 {
 	CString listPath;
-	listPath += PATH;
-	listPath += LIST_TXT;
+	listPath += settings.PATH;
+	listPath += SL_LIST_TXT;
 
 	ifstream listfin;
 	listfin.open(listPath);
@@ -117,28 +137,6 @@ void CkinectReco::InitSignTable()
 		}
 	}
 	listfin.close();
-}
-
-void CkinectReco::InitFont()
-{
-	//m_font.CreateFontW(20, 12, 0, 0, 1, 0, 0, 0, 0, OUT_DEFAULT_PRECIS, 0, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, (LPCTSTR)"굴림");
-	m_fontRecoMode.CreatePointFont(350, (LPCTSTR)"굴림");
-	m_fontResult.CreatePointFont(250, (LPCTSTR)"굴림");
-	GetDlgItem(IDC_STATIC_RECOG_MODE)->SetFont(&m_fontRecoMode);
-	GetDlgItem(IDC_STATIC_RESULT)->SetFont(&m_fontResult);
-}
-
-// p1(x1, y1), p2(x2, y2)
-// f(x) = y1인 수평선을 기준으로하여 p1과 p2사이의 각도를 구한다.
-double CkinectReco::GetAngle(double x1, double x2, double y1, double y2)
-{
-	double dx = x2 - x1;
-	double dy = y2 - y1;
-
-	double rad = atan2(dx, dy);
-	double degree = (rad * 180) / PI ;
-
-	return degree;
 }
 
 void CkinectReco::SetAngleData(int *data)
@@ -185,7 +183,8 @@ void CkinectReco::RecogAction()
 {
 	switch (RECOG_MODE)
 	{
-	// 사람의 AngleData를 저장한다
+		// 현재 AngleData를 저장한다
+		// RECOG_MODE가 STOP인지 SIGN인지 구분하는 기준이 된다
 	case FIRST:
 		{
 			CString msg("FIRST");
@@ -195,7 +194,7 @@ void CkinectReco::RecogAction()
 		}
 		break;
 
-	// FIRST에서 저장한 값과 현재의 데이터가 ANGLE_DIFFERENCE 이상 차이 난다면 RECOG_MODE를 SIGN으로 바꾼다
+		// FIRST에서 저장한 값과 현재의 데이터가 ANGLE_DIFFERENCE 이상 차이 난다면 RECOG_MODE를 SIGN으로 바꾼다
 	case STOP:
 		{
 			int tempAngleData[ANGLE_DATA_COUNT];
@@ -207,7 +206,7 @@ void CkinectReco::RecogAction()
 		}
 		break;
 
-	// rawAngleData를 저장한다
+		// rawAngleData를 저장한다
 	case SIGN:
 		{
 			CString msg("SIGN");
@@ -219,14 +218,14 @@ void CkinectReco::RecogAction()
 			for (int i = 0; i < ANGLE_DATA_COUNT; i++)
 				rawAngleData[i].push_back(tempAngleData[i]);
 
-			if (rawAngleData[0].size() <= MAX_RAW_DATA_FRAME)
+			if (rawAngleData[0].size() <= settings.MAX_RAW_DATA_FRAME)
 			{
-				if (rawAngleData[0].size() >= MIN_STOPPED_FRAME)
+				if (rawAngleData[0].size() >= settings.MIN_STOPPED_FRAME)
 				{
 					for (int i = 0; i < ANGLE_DATA_COUNT; i++)
 					{
 						int cnt = 0;
-						for (int j = rawAngleData[i].size() - 2; cnt < MIN_STOPPED_FRAME - 1; j--)
+						for (int j = rawAngleData[i].size() - 2; cnt < settings.MIN_STOPPED_FRAME - 1; j--)
 						{
 							if (rawAngleData[i].at(rawAngleData[i].size() - 1) == rawAngleData[i].at(j))
 								cnt++;
@@ -235,7 +234,7 @@ void CkinectReco::RecogAction()
 						}
 
 						// MIN_STOPPED_FRAME만큼 같은 값이 연속하지 않는 다면 RECOG_MODE = SIGN이다
-						if (cnt < MIN_STOPPED_FRAME - 1)
+						if (cnt < settings.MIN_STOPPED_FRAME - 1)
 						{
 							RECOG_MODE = SIGN;
 							break;
@@ -246,11 +245,10 @@ void CkinectReco::RecogAction()
 			}
 			else
 				RECOG_MODE = RECOG;
-
 		}
 		break;
 
-	// signTable중에서 frame수가 +-0.5배 안에 들어오면 DTW를 이용해 비교한다
+		// signTable중에서 frame수가 +-0.5배 안에 들어오면 DTW를 이용해 비교한다
 	case RECOG:
 		{
 			CString msg("RECOG");
@@ -258,20 +256,20 @@ void CkinectReco::RecogAction()
 
 			vector<int> fileData[ANGLE_DATA_COUNT];
 
-			// SignTable의 frameCount가 rawAngleData의 RECOG_FRAME_ARRANGE내에 있는 것만 비교한다
+			// SignTable의 frameCount가 rawAngleData의 RECOG_FRAME_RANGE내에 있는 것만 비교한다
 			for (int i = 0; i < signTable.size(); i++)
 			{
 				SignTable &iSignTable = signTable.at(i);
 
 				if (abs(iSignTable.frameCount - (int)(rawAngleData[0].size()))
-					<= (int)(rawAngleData[0].size() * RECOG_FRAME_ARRANGE))
+					<= (int)(rawAngleData[0].size() * settings.RECOG_FRAME_RANGE))
 				{
 					iSignTable.isInArrange = true;
 
 					// RECOG_FRAME_ARRANGE내에 있다면 해당 파일을 OPEN
 					// fileData를 추출한다
 					CString slPath;
-					slPath += PATH;
+					slPath += settings.PATH;
 					slPath += iSignTable.slName;
 					slPath += ".txt";
 
@@ -313,7 +311,7 @@ void CkinectReco::RecogAction()
 			}
 
 			// 비교한 수화 중에 가장 높은 Similarity를 구한다
-			float maxSimilarity = 0;
+			float maxSimilarity = 0.0f;
 			int maxIdx = - 1;
 			for (int i = 0; i < signTable.size(); i++)
 			{
@@ -329,17 +327,21 @@ void CkinectReco::RecogAction()
 				}
 			}
 
-			// 출력
+			// Dialog에 출력
+			CString strResult;
 			if (maxIdx != -1)
 			{
 				CString strSimilarity;
-				CString strResult;
-				strSimilarity.Format(_T("%1.2f"), maxSimilarity);
+				strSimilarity.Format(_T("%d"), (int)(maxSimilarity * 100));
+				strSimilarity += "%";
 				strResult += strSimilarity;
 				strResult += " ";
 				strResult += signTable.at(maxIdx).slName;
-				SetDlgItemText(IDC_STATIC_RESULT, strResult);
 			}
+			else
+				strResult += "Not Matching";
+			SetDlgItemText(IDC_STATIC_RESULT, strResult);
+
 
 			for (int i = 0; i < ANGLE_DATA_COUNT; i++)
 				rawAngleData[i].clear();
@@ -347,4 +349,157 @@ void CkinectReco::RecogAction()
 			RECOG_MODE = FIRST;
 		}
 	}
+}
+
+void CkinectReco::InitImgTable()
+{
+	CString listPath;
+	listPath += settings.PATH;
+	listPath += IMG_LIST_TXT;
+
+	ifstream listfin;
+	listfin.open(listPath);
+	if (listfin.is_open())
+	{
+		char buf[STRING_SIZE];
+
+		ImgTable tImgTable;
+
+		while (listfin.getline(buf, STRING_SIZE))
+		{
+			strcpy(tImgTable.imgName, buf);
+			listfin.getline(buf, STRING_SIZE);	
+			strcpy(tImgTable.fileName, buf);
+			tImgTable.coeffVal = 0.0f;
+			tImgTable.leftTop.x = 0;
+			tImgTable.leftTop.y = 0;
+			imgTable.push_back(tImgTable);
+		}
+	}
+	listfin.close();
+}
+
+IplImage* Crop( IplImage* src,  CvRect roi)
+{
+
+	// Must have dimensions of output image
+	IplImage* cropped = cvCreateImage( cvSize(roi.width,roi.height), src->depth, src->nChannels );
+
+	// Say what the source region is
+	cvSetImageROI( src, roi );
+
+	// Do the copy
+	cvCopy( src, cropped );
+	cvResetImageROI( src );
+
+	return cropped;
+}
+
+
+void CkinectReco::TemplateMatching()
+{
+	double min, max;
+	CvPoint leftTop;
+
+	int tempAngleData[ANGLE_DATA_COUNT];
+	SetAngleData(tempAngleData);
+
+	for (int i = 0; i < ANGLE_DATA_COUNT; i++)
+		rawAngleData[i].push_back(tempAngleData[i]);
+
+	if (rawAngleData[0].size() > settings.MAX_RAW_DATA_FRAME)
+	{
+		for (int i = 0; i < ANGLE_DATA_COUNT; i++)
+			rawAngleData[i].clear();
+		return;
+	}
+
+	if (rawAngleData[0].size() >= settings.MIN_STOPPED_FRAME)
+	{
+		for (int i = 0; i < ANGLE_DATA_COUNT; i++)
+		{
+			int cnt = 0;
+			for (int j = rawAngleData[i].size() - 2; cnt < settings.MIN_STOPPED_FRAME - 1; j--)
+			{
+				if (rawAngleData[i].at(rawAngleData[i].size() - 1) == rawAngleData[i].at(j))
+					cnt++; 
+				else
+					break;
+			}
+			// MIN_STOPPED_FRAME만큼 같은 값이 연속하지 않는 다면 Template Matching하지 않는다
+			if (cnt < settings.MIN_STOPPED_FRAME - 1)	
+				return;
+		}
+	}
+	else
+		return;
+
+	for (int i = 0; i < ANGLE_DATA_COUNT; i++)
+		rawAngleData[i].clear();
+
+
+	for (int i = 0; i < imgTable.size(); i++)
+	{
+		ImgTable &iImgTable = imgTable.at(i);
+
+		int range = 80;
+		CvRect handRect = cvRect(
+			kinectStream.m_skeletonPoints[NUI_SKELETON_POSITION_HAND_RIGHT].x - range,
+			kinectStream.m_skeletonPoints[NUI_SKELETON_POSITION_HAND_RIGHT].y - range,
+			range * 2,
+			range * 2);
+
+		IplImage *handRightImg = Crop(kinectStream.m_depthIpl, handRect);
+
+		// 비교할 이미지
+		IplImage *tempImg = cvLoadImage(iImgTable.fileName, -1);
+		// 상관계수 이미지
+		IplImage* coeffImg = cvCreateImage(
+			cvSize(
+			handRightImg->width - tempImg->width + 1,
+			handRightImg->height - tempImg->height + 1),
+			IPL_DEPTH_32F,
+			1
+			);
+
+		// 상관계수를 그린다
+		cvMatchTemplate(handRightImg, tempImg, coeffImg, CV_TM_CCOEFF_NORMED);
+		// 상관계수가 최대값을 값는 위치(leftTop) 찾는다
+		cvMinMaxLoc(coeffImg, &min, &max, NULL, &leftTop);
+
+		iImgTable.coeffVal = max;
+		iImgTable.leftTop = leftTop;
+
+		cvReleaseImage(&handRightImg);
+		cvReleaseImage(&tempImg);
+		cvReleaseImage(&coeffImg);
+	}
+
+	// 비교한 수화 중에 가장 높은 상관계수(CoeffVal)를 구한다
+	int maxIdx = -1;
+	double maxCoeffVal = 0.0f;
+	for (int i = 0; i < imgTable.size(); i++)
+	{
+		ImgTable &iImgTable = imgTable.at(i);
+		if (iImgTable.coeffVal > maxCoeffVal)
+		{
+			maxCoeffVal = iImgTable.coeffVal;
+			maxIdx = i;
+		}
+	}
+
+	// Dialog에 출력
+	CString strResult;
+	if (maxIdx != -1)
+	{
+		CString strSimilarity;
+		strSimilarity.Format(_T("%d"), (int)(maxCoeffVal * 100));
+		strSimilarity += "%";
+		strResult += strSimilarity;
+		strResult += " ";
+		strResult += imgTable.at(maxIdx).imgName;
+	}
+	else
+		strResult += "Not Matching";
+	SetDlgItemText(IDC_STATIC_RESULT, strResult);
 }

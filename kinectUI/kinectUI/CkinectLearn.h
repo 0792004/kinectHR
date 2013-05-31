@@ -4,16 +4,9 @@
 #include "resource.h"
 #include "kinectStream.h"
 #include "CvvImage.h"
+#include "common.h"
 #include <vector>
 #include <fstream>
-
-//#define PATH			"C:\\Users\\kwon\\Documents\\"
-#define PATH			""
-#define LIST_TXT		"sl_list.txt"
-#define STRING_SIZE		1024
-#define PI				3.1415926f
-#define VIEW_RATE		70
-#define FPS				30
 
 using namespace std;
 
@@ -27,6 +20,9 @@ public:
 
 // 대화 상자 데이터입니다.
 	enum { IDD = IDD_KINECT_LEARN };
+
+	// Settings 변수
+	Settings settings;
 
 	// CKinectStream 변수
 	CKinectStream kinectStream;
@@ -45,14 +41,7 @@ public:
 	bool isLearnMode;
 
 	void InitFont();
-
-	// GetAngle
-	double GetAngle(double x1, double x2, double y1, double y2);
-
-	// SaveRawData
 	void SaveRawData();
-
-	// DisplayList
 	void DisplayList();
 
 protected:

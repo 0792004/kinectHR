@@ -39,7 +39,7 @@ public:
 	CvSeq* m_rightPtSeq;
 	CvSeq* m_leftPtSeq;
 
-	// 관절의 x, y값 저장
+	// 관절의 x, y값을 Point2d형으로 저장(double-type)
 	Point2d m_jointData[NUI_SKELETON_POSITION_COUNT];
 
 	// 함수
@@ -69,7 +69,7 @@ public:
 	void ApplySkeleton(IplImage *img);
 
 	// Finger
-	bool checkLine(CvPoint pt1,CvPoint pt2);
+	bool CheckLine(CvPoint pt1,CvPoint pt2);
 	void DrawConvexHull(IplImage *img);
 
 	// Get

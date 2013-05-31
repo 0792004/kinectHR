@@ -85,13 +85,21 @@ void CkinectLearn::OnTimer(UINT_PTR nIDEvent)
 
 void CkinectLearn::OnBnClickedButtonRun()
 {
+	// settins.ini 파일을 읽어들임
+	if (!settings.InitSettings())
+	{
+		MessageBox(_T("settings.ini 파일을 확인하고 프로그램을 다시 시작하십시오."));
+		return;
+	}
+
+	// kinect 초기화
 	if (kinectStream.InitializeKinect())
 	{
 		kinectStream.OpenColorStream();
 		kinectStream.OpenDepthStream();
 		InitFont();
 		DisplayList();
-		SetTimer(1, 1000 / FPS, NULL);
+		SetTimer(1, 1000 / settings.FPS, NULL);
 	}
 	else
 		MessageBox(_T("Kinect 연결을 확인하고 프로그램을 다시 시작 하십시오."));
@@ -109,7 +117,7 @@ void CkinectLearn::OnBnClickedButtonLearn()
 	{
 		isLearnMode = false;
 		CString slPath;
-		slPath += PATH;
+		slPath += settings.PATH;
 		slPath += m_strSLName;
 		slPath += ".txt";
 
@@ -128,19 +136,6 @@ void CkinectLearn::InitFont()
 	m_fontList.CreatePointFont(150, (LPCTSTR)"굴림");
 	GetDlgItem(IDC_EDIT_SLNAME)->SetFont(&m_fontInput);
 	GetDlgItem(IDC_LIST_SLNAME)->SetFont(&m_fontList);
-}
-
-// p1(x1, y1), p2(x2, y2)
-// f(x) = y1인 수평선을 기준으로하여 p1과 p2사이의 각도를 구한다.
-double CkinectLearn::GetAngle(double x1, double x2, double y1, double y2)
-{
-	double dx = x2 - x1;
-	double dy = y2 - y1;
-
-	double rad = atan2(dx, dy);
-	double degree = (rad * 180) / PI ;
-
-	return degree;
 }
 
 char* ConvertWCtoC(wchar_t* str)
@@ -162,12 +157,10 @@ void CkinectLearn::SaveRawData()
 {
 	// sl_list.txt에 수화 이름 저장
 	CString listPath;
-	listPath += PATH;
-	listPath += "sl_list.txt";
+	listPath += settings.PATH;
+	listPath += SL_LIST_TXT;
 
 	ofstream fout;
-	locale loc("kor", locale::ctype);
-	fout.imbue(loc);
 	fout.open(listPath, ios::app);
 	
 	if (fout.is_open())
@@ -181,7 +174,7 @@ void CkinectLearn::SaveRawData()
 	fout.close();
 
 	CString slPath;
-	slPath += PATH;
+	slPath += settings.PATH;
 	slPath += m_strSLName;
 	slPath += ".txt";
 	// name(수화명).txt에 각종 데이터 저장
@@ -236,8 +229,8 @@ void CkinectLearn::DisplayList()
 	m_lSLName.ResetContent();
 
 	CString listPath;
-	listPath += PATH;
-	listPath += LIST_TXT;
+	listPath += settings.PATH;
+	listPath += SL_LIST_TXT;
 
 	ifstream fin;
 	fin.open(listPath, ios::in);

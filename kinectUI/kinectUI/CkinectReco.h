@@ -5,21 +5,7 @@
 #include "kinectStream.h"
 #include "CvvImage.h"
 #include "simpleDTW.h"
-
-//#define PATH				"C:\\Users\\kwon\\Documents\\"
-#define PATH				""
-#define LIST_TXT			"sl_list.txt"
-
-#define STRING_SIZE				1024
-#define PI						3.1415926f
-#define VIEW_RATE				70
-#define FPS						30
-
-#define ANGLE_DIFFERENCE		3
-#define MIN_STOPPED_FRAME		3
-#define RECOG_FRAME_ARRANGE		0.50f
-#define RECOG_DTW_RATE			0.88f
-#define MAX_RAW_DATA_FRAME		1000
+#include "common.h"
 
 // CkinectReco 대화 상자입니다.
 
@@ -33,6 +19,9 @@ public:
 
 // 대화 상자 데이터입니다.
 	enum { IDD = IDD_KINECT_RECO };
+
+	// Settings 변수
+	Settings settings;
 
 	// CKinectStream 변수
 	CKinectStream kinectStream;
@@ -68,6 +57,7 @@ public:
 	// preJointData
 	Point2d preJointData[NUI_SKELETON_POSITION_COUNT];
 
+	// SignTable
 	typedef struct SignTable {
 		char slName[STRING_SIZE];
 		int frameCount;
@@ -77,12 +67,22 @@ public:
 
 	vector<SignTable> signTable;
 
+	// ImgTable
+	typedef struct ImgTable {
+		char imgName[STRING_SIZE];
+		char fileName[STRING_SIZE];
+		double coeffVal;
+		CvPoint leftTop;
+	}ImgTable;
 	
-	void InitSignTable();
+	vector<ImgTable> imgTable;
+
 	void InitFont();
-	double GetAngle(double x1, double x2, double y1, double y2);
+	void InitSignTable();
+	void InitImgTable();
 	void SetAngleData(int *data);
 	void RecogAction();
+	void TemplateMatching();
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 지원입니다.

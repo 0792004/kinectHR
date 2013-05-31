@@ -81,10 +81,27 @@ HRESULT CKinectStream::CreateRGBImage(HANDLE h, IplImage* Color)
 RGBQUAD CKinectStream::Nui_ShortToQuad_Depth(USHORT s)
 {
 	USHORT realDepth = (s & 0xfff8) >> 3;
-	BYTE i = 255 - (BYTE)(256 * realDepth / (0x0fff));
+	USHORT playerIndex = NuiDepthPixelToPlayerIndex(s);
+	BYTE b = 255 - (BYTE)(256 * realDepth / (0x0fff));
 
 	RGBQUAD q;
-	q.rgbRed = q.rgbGreen = q.rgbBlue = ~i;
+	q.rgbRed = q.rgbGreen = q.rgbBlue = ~b;
+	/*switch (playerIndex)
+	{
+	case 0: case 7:
+		q.rgbRed = q.rgbGreen = q.rgbBlue = 0;
+		break;
+
+	case 1: case 2: case 3:
+	case 4: case 5: case 6:
+		q.rgbRed = 0;
+		q.rgbGreen = b;
+		q.rgbBlue = 0;
+		break;
+
+	default:
+		q.rgbRed = q.rgbGreen = q.rgbBlue = 0;
+	}*/
 	return q;
 }
 
@@ -103,7 +120,6 @@ HRESULT CKinectStream::OpenDepthStream()
 	{
 		return 0;
 	}
-
 }
 
 HRESULT CKinectStream::CreateDepthImage(HANDLE h, IplImage* Depth)
@@ -206,7 +222,7 @@ void CKinectStream::DrawBone(const NUI_SKELETON_DATA &position, NUI_SKELETON_POS
 
 	if(j1state == NUI_SKELETON_POSITION_TRACKED && j2state == NUI_SKELETON_POSITION_TRACKED)
 	{
-		cvLine(Skeleton, m_skeletonPoints[j1], m_skeletonPoints[j2], CV_RGB(0, 255, 0), 3, 8, 0);
+		cvLine(Skeleton, m_skeletonPoints[j1], m_skeletonPoints[j2], CV_RGB(255, 0, 0), 3, 8, 0);
 	}
 }
 
@@ -306,7 +322,7 @@ void CKinectStream::ApplySkeleton(IplImage *img)
 	}
 }
 
-bool CKinectStream::checkLine(CvPoint pt1,CvPoint pt2)
+bool CKinectStream::CheckLine(CvPoint pt1,CvPoint pt2)
 {
 	if( ((pt1.x - pt2.x) * (pt1.x - pt2.x)) + ((pt1.y - pt2.y) * (pt1.y - pt2.y)) > 400 )
 		return true;
@@ -334,7 +350,7 @@ void CKinectStream::DrawConvexHull(IplImage *img)
 				convexPt = hull_pt;
 				endPt = convexPt;
 			}
-			if(checkLine(convexPt, hull_pt))
+			if(CheckLine(convexPt, hull_pt))
 			{
 				if(convexPt.x < m_skeletonPoints[NUI_SKELETON_POSITION_HAND_LEFT].x+20)
 				{
@@ -351,8 +367,10 @@ void CKinectStream::DrawConvexHull(IplImage *img)
 
 		}
 	}
+
 	convexPt.x = 0; convexPt.y = 0;
 	endPt.x=0, endPt.y=0;
+
 	if(m_rightPtSeq->total != NULL)
 	{
 		hull = cvConvexHull2(m_rightPtSeq, 0, CV_COUNTER_CLOCKWISE, 0 );
@@ -367,7 +385,7 @@ void CKinectStream::DrawConvexHull(IplImage *img)
 				endPt = convexPt;
 			}
 
-			if(checkLine(convexPt, hull_pt))
+			if(CheckLine(convexPt, hull_pt))
 			{
 				if(convexPt.x < m_skeletonPoints[NUI_SKELETON_POSITION_HAND_RIGHT].x+20)
 				{

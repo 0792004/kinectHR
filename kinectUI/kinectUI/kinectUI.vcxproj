@@ -108,6 +108,7 @@
   <ItemGroup>
     <ClInclude Include="CkinectLearn.h" />
     <ClInclude Include="CkinectReco.h" />
+    <ClInclude Include="common.h" />
     <ClInclude Include="CvvImage.h" />
     <ClInclude Include="kinectStream.h" />
     <ClInclude Include="kinectUI.h" />
@@ -120,6 +121,7 @@
   <ItemGroup>
     <ClCompile Include="CkinectLearn.cpp" />
     <ClCompile Include="CkinectReco.cpp" />
+    <ClCompile Include="common.cpp" />
     <ClCompile Include="CvvImage.cpp" />
     <ClCompile Include="kinectStream.cpp" />
     <ClCompile Include="kinectUI.cpp" />
