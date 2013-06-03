@@ -102,8 +102,12 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="..\..\..\..\..\Desktop\darkwood.bmp" />
+    <None Include="..\..\..\..\..\Desktop\exit.bmp" />
+    <None Include="..\..\..\..\..\Desktop\learn.bmp" />
+    <None Include="..\..\..\..\..\Desktop\recog.bmp" />
+    <None Include="..\..\..\..\..\Downloads\kinect.ico" />
     <None Include="res\kinectUI.ico" />
-    <None Include="res\kinectUI.rc2" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CkinectLearn.h" />

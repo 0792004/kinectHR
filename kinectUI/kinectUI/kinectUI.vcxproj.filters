@@ -15,10 +15,22 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\kinectUI.rc2">
+    <None Include="..\..\..\..\..\Desktop\darkwood.bmp">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="..\..\..\..\..\Desktop\learn.bmp">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="..\..\..\..\..\Desktop\recog.bmp">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="..\..\..\..\..\Desktop\exit.bmp">
       <Filter>리소스 파일</Filter>
     </None>
     <None Include="res\kinectUI.ico">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="..\..\..\..\..\Downloads\kinect.ico">
       <Filter>리소스 파일</Filter>
     </None>
   </ItemGroup>

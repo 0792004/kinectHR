@@ -30,8 +30,7 @@ public:
 	CvvImage cvvImage;
 
 	// FONT
-	CFont m_fontRecoMode;
-	CFont m_fontResult;
+	CFont m_fontStatic;
 
 	// ANGLE_DATA_INDEX
 	enum _ANGLE_DATA_INDEX {
@@ -91,8 +90,8 @@ protected:
 public:
 	CStatic m_sColor;
 	CStatic m_sDepth;
-	CStatic m_sRecoMode;
-	CStatic m_sResult;
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnBnClickedButtonRun();
+//	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	CButton m_btnRun;
 };

@@ -56,4 +56,6 @@ public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnBnClickedButtonRun();
 	afx_msg void OnBnClickedButtonLearn();
+	CButton m_btnRun;
+	CButton m_btnLearn;
 };

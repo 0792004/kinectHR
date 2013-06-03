@@ -23,8 +23,7 @@ void CkinectReco::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_STATIC_COLOR, m_sColor);
 	DDX_Control(pDX, IDC_STATIC_DEPTH, m_sDepth);
-	DDX_Control(pDX, IDC_STATIC_RECOG_MODE, m_sRecoMode);
-	DDX_Control(pDX, IDC_STATIC_RESULT, m_sResult);
+	DDX_Control(pDX, IDC_BUTTON_RUN, m_btnRun);
 }
 
 
@@ -99,6 +98,7 @@ void CkinectReco::OnBnClickedButtonRun()
 		//InitImgTable();
 		RECOG_MODE = FIRST;
 		SetTimer(1, 1000 / settings.FPS, NULL);
+		m_btnRun.EnableWindow(true);
 	}
 	else
 		MessageBox(_T("Kinect 연결을 확인하고 프로그램을 다시 시작 하십시오."));
@@ -106,10 +106,10 @@ void CkinectReco::OnBnClickedButtonRun()
 
 void CkinectReco::InitFont()
 {
-	m_fontRecoMode.CreatePointFont(350, (LPCTSTR)"굴림");
-	m_fontResult.CreatePointFont(250, (LPCTSTR)"굴림");
-	GetDlgItem(IDC_STATIC_RECOG_MODE)->SetFont(&m_fontRecoMode);
-	GetDlgItem(IDC_STATIC_RESULT)->SetFont(&m_fontResult);
+	m_fontStatic.CreatePointFont(350, (LPCTSTR)"굴림");
+	GetDlgItem(IDC_STATIC_RECOG_MODE)->SetFont(&m_fontStatic);
+	GetDlgItem(IDC_STATIC_SLNAME)->SetFont(&m_fontStatic);
+	GetDlgItem(IDC_STATIC_RECOG_RATE)->SetFont(&m_fontStatic);
 }
 
 void CkinectReco::InitSignTable()
@@ -329,19 +329,18 @@ void CkinectReco::RecogAction()
 
 			// Dialog에 출력
 			CString strResult;
+			CString strSimilarity;
 			if (maxIdx != -1)
 			{
-				CString strSimilarity;
+				strResult += signTable.at(maxIdx).slName;
 				strSimilarity.Format(_T("%d"), (int)(maxSimilarity * 100));
 				strSimilarity += "%";
-				strResult += strSimilarity;
-				strResult += " ";
-				strResult += signTable.at(maxIdx).slName;
 			}
 			else
-				strResult += "Not Matching";
-			SetDlgItemText(IDC_STATIC_RESULT, strResult);
+				strResult += "없음";
 
+			SetDlgItemText(IDC_STATIC_SLNAME, strResult);
+			SetDlgItemText(IDC_STATIC_RECOG_RATE, strSimilarity);
 
 			for (int i = 0; i < ANGLE_DATA_COUNT; i++)
 				rawAngleData[i].clear();
@@ -487,19 +486,19 @@ void CkinectReco::TemplateMatching()
 			maxIdx = i;
 		}
 	}
-
+		
 	// Dialog에 출력
 	CString strResult;
+	CString strSimilarity;
 	if (maxIdx != -1)
 	{
-		CString strSimilarity;
+		strResult += signTable.at(maxIdx).slName;
 		strSimilarity.Format(_T("%d"), (int)(maxCoeffVal * 100));
 		strSimilarity += "%";
-		strResult += strSimilarity;
-		strResult += " ";
-		strResult += imgTable.at(maxIdx).imgName;
 	}
 	else
-		strResult += "Not Matching";
-	SetDlgItemText(IDC_STATIC_RESULT, strResult);
+		strResult += "없음";
+
+	SetDlgItemText(IDC_STATIC_SLNAME, strResult);
+	SetDlgItemText(IDC_STATIC_RECOG_RATE, strSimilarity);
 }

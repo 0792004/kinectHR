@@ -6,7 +6,7 @@
 #define SL_LIST_TXT				"sl_list.txt"
 #define IMG_LIST_TXT			"img_list.txt"
 #define STRING_SIZE				1024
-#define VIEW_RATE				70
+#define VIEW_RATE				100
 #define ANGLE_DIFFERENCE		3
 
 using namespace std;

@@ -9,6 +9,9 @@
 // CkinectUIDlg 대화 상자
 class CkinectUIDlg : public CDialogEx
 {
+public:
+	CImage m_bgImage;
+
 // 생성입니다.
 public:
 	CkinectUIDlg(CWnd* pParent = NULL);	// 표준 생성자입니다.
@@ -31,9 +34,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
-	CButton m_btnLearn;
-	CButton m_btnReco;
-	afx_msg void OnBnClickedButtonReco();
-	afx_msg void OnBnClickedButtonLearn();
 	afx_msg void OnBnClickedButtonSsettings();
+	afx_msg void OnBnClickedMfcbuttonLearn();
+	afx_msg void OnBnClickedMfcbuttonRecog();
+	afx_msg void OnBnClickedMfcbuttonExit();
 };

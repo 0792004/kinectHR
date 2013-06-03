@@ -55,16 +55,15 @@ CkinectUIDlg::CkinectUIDlg(CWnd* pParent /*=NULL*/)
 void CkinectUIDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_BUTTON_LEARN, m_btnLearn);
-	DDX_Control(pDX, IDC_BUTTON_RECO, m_btnReco);
 }
 
 BEGIN_MESSAGE_MAP(CkinectUIDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_BN_CLICKED(IDC_BUTTON_RECO, &CkinectUIDlg::OnBnClickedButtonReco)
-	ON_BN_CLICKED(IDC_BUTTON_LEARN, &CkinectUIDlg::OnBnClickedButtonLearn)
+	ON_BN_CLICKED(IDC_MFCBUTTON_LEARN, &CkinectUIDlg::OnBnClickedMfcbuttonLearn)
+	ON_BN_CLICKED(IDC_MFCBUTTON_RECOG, &CkinectUIDlg::OnBnClickedMfcbuttonRecog)
+	ON_BN_CLICKED(IDC_MFCBUTTON_EXIT, &CkinectUIDlg::OnBnClickedMfcbuttonExit)
 END_MESSAGE_MAP()
 
 
@@ -139,6 +138,11 @@ void CkinectUIDlg::OnPaint()
 	}
 	else
 	{
+		CPaintDC dc(this);
+
+		m_bgImage.LoadFromResource(AfxGetInstanceHandle(), IDB_BGIMAGE);
+		m_bgImage.BitBlt(dc.m_hDC, 0, 0, SRCCOPY);
+
 		CDialogEx::OnPaint();
 	}
 }
@@ -150,14 +154,22 @@ HCURSOR CkinectUIDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-void CkinectUIDlg::OnBnClickedButtonReco()
+
+void CkinectUIDlg::OnBnClickedMfcbuttonLearn()
+{
+	CkinectLearn learnDlg;
+	learnDlg.DoModal();
+}
+
+
+void CkinectUIDlg::OnBnClickedMfcbuttonRecog()
 {
 	CkinectReco recoDlg;
 	recoDlg.DoModal();
 }
 
-void CkinectUIDlg::OnBnClickedButtonLearn()
+
+void CkinectUIDlg::OnBnClickedMfcbuttonExit()
 {
-	CkinectLearn learnDlg;
-	learnDlg.DoModal();
+	::SendMessage(this->m_hWnd, WM_CLOSE, NULL, NULL);
 }

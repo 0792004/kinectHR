@@ -28,6 +28,8 @@ void CkinectLearn::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_STATIC_DEPTH, m_sDepth);
 	DDX_Control(pDX, IDC_LIST_SLNAME, m_lSLName);
 	DDX_Text(pDX, IDC_EDIT_SLNAME, m_strSLName);
+	DDX_Control(pDX, IDC_BUTTON_RUN, m_btnRun);
+	DDX_Control(pDX, IDC_BUTTON_LEARN, m_btnLearn);
 }
 
 
@@ -100,6 +102,7 @@ void CkinectLearn::OnBnClickedButtonRun()
 		InitFont();
 		DisplayList();
 		SetTimer(1, 1000 / settings.FPS, NULL);
+		m_btnRun.EnableWindow(false);
 	}
 	else
 		MessageBox(_T("Kinect 연결을 확인하고 프로그램을 다시 시작 하십시오."));
@@ -112,6 +115,7 @@ void CkinectLearn::OnBnClickedButtonLearn()
 	{
 		isLearnMode = true;
 		UpdateData();
+		m_btnLearn.SetWindowTextW(_T("학습 종료"));
 	}
 	else
 	{
@@ -126,15 +130,16 @@ void CkinectLearn::OnBnClickedButtonLearn()
 			SaveRawData();
 			DisplayList();
 		}
+		m_btnLearn.SetWindowTextW(_T("학습 시작"));
 	}
 }
 
 void CkinectLearn::InitFont()
 {
-	//m_font.CreateFontW(20, 12, 0, 0, 1, 0, 0, 0, 0, OUT_DEFAULT_PRECIS, 0, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, (LPCTSTR)"굴림");
 	m_fontInput.CreatePointFont(350, (LPCTSTR)"굴림");
-	m_fontList.CreatePointFont(150, (LPCTSTR)"굴림");
 	GetDlgItem(IDC_EDIT_SLNAME)->SetFont(&m_fontInput);
+
+	m_fontList.CreatePointFont(150, (LPCTSTR)"굴림");
 	GetDlgItem(IDC_LIST_SLNAME)->SetFont(&m_fontList);
 }
 
