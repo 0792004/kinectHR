@@ -107,6 +107,8 @@
     <None Include="..\..\..\..\..\Desktop\learn.bmp" />
     <None Include="..\..\..\..\..\Desktop\recog.bmp" />
     <None Include="..\..\..\..\..\Downloads\kinect.ico" />
+    <None Include="..\..\..\..\..\Downloads\UI COMPLETE.bmp" />
+    <None Include="..\..\..\..\..\Downloads\UI COMPLETE2.bmp" />
     <None Include="res\kinectUI.ico" />
   </ItemGroup>
   <ItemGroup>
